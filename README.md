@@ -35,11 +35,38 @@ User Emergency Input (Text / Voice / GPS)
 
 ---
 
-## 🚀 Quick Setup & Installation
+## ☁️ Cloud Deployment Guide (Render + Vercel)
 
-### Prerequisites
-- Python 3.10+
-- Node.js 18+
+### 1. Deploying Backend to Render 🚀
+
+1. Go to **[Render Dashboard](https://dashboard.render.com)** → **New** → **Web Service**.
+2. Connect your GitHub repository (`nitin25J/RESQ-AI`).
+3. Configure settings:
+   - **Name**: `resq-ai-backend`
+   - **Root Directory**: `backend`
+   - **Environment**: `Python 3`
+   - **Build Command**: `pip install -r requirements.txt`
+   - **Start Command**: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+4. Add Environment Variables:
+   - `GEMINI_API_KEY`: *Your Gemini API Key*
+   - `GOOGLE_MAPS_API_KEY`: *(Optional) Your Google Places API Key*
+   - `CORS_ORIGINS`: `*`
+5. Click **Deploy Web Service**. Copy your backend URL (e.g. `https://resq-ai-backend.onrender.com`).
+
+---
+
+### 2. Deploying Frontend to Vercel 🌐
+
+1. Go to **[Vercel Dashboard](https://vercel.com/new)**.
+2. Import your GitHub repository (`nitin25J/RESQ-AI`).
+3. Set **Root Directory** to `frontend`.
+4. Add Environment Variable:
+   - `NEXT_PUBLIC_API_URL`: `https://resq-ai-backend.onrender.com` (Your Render Backend URL)
+5. Click **Deploy**. Vercel will build and launch your live frontend site!
+
+---
+
+## 🚀 Local Development Setup
 
 ### 1. Backend Setup
 
