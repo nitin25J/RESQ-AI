@@ -101,5 +101,32 @@ RESQ-AI/
 │   │
 │   ├── package.json
 │   └── .env.local
+
+
+3. Technology Stack
+Frontend
+Next.js
+TypeScript
+Tailwind CSS
+Lucide React
+Browser Geolocation API
+Web Speech API
+Backend
+Python
+FastAPI
+Pydantic
+HTTPX
+Uvicorn
+AI and Agent Orchestration
+Google Gemini API
+LangGraph
+Location and Maps
+Google Places API
+OpenStreetMap
+Overpass API
+Google Maps
+Deployment
+Vercel
+Render
 │
 └── README.md
