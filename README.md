@@ -1,79 +1,68 @@
-
-# 🚨 RESQ AI
+# RESQ AI
 
 ## Agentic AI Emergency Response System
 
-> **Analyze emergencies. Get immediate guidance. Find nearby hospitals. Prepare an emergency response.**
+RESQ AI is an Agentic AI-powered emergency response system designed to assist users during emergency situations by combining artificial intelligence, real-time location services, nearby hospital discovery, first-aid guidance, incident reporting, and emergency response preparation into a single workflow.
 
+The system analyzes a user's emergency description, determines the type and severity of the situation, provides immediate first-aid guidance, identifies nearby hospitals based on the user's current GPS location, generates a structured incident report, and prepares an emergency alert payload.
 
-### 🌐 Live Links
-
-- 🚀 **Live Application:** https://resq-ai-emergency.vercel.app/
-- ⚙️ **Backend API:** https://resq-ai-ls67.onrender.com
-- ❤️ **Backend Health Check:** https://resq-ai-ls67.onrender.com/api/health
+> RESQ AI is an AI-assisted emergency response prototype. It does not replace doctors, paramedics, hospitals, ambulances, or emergency services.
 
 ---
 
-## 🧠 What is RESQ AI?
+## Live Application
 
-RESQ AI is an **Agentic AI-powered emergency response system** designed to assist users during emergency situations.
+**Live Application**
 
-It combines:
+https://resq-ai-emergency.vercel.app/
 
-- 🤖 Artificial Intelligence
-- 🧠 Agentic AI workflows
-- 📍 Real-time GPS location
-- 🏥 Nearby hospital discovery
-- 🩹 First-aid guidance
-- 📋 Emergency report generation
-- 🚨 Emergency alert preparation
+**Backend API**
 
-Instead of functioning as a simple chatbot, RESQ AI uses multiple specialized AI agents and real-world tools that work together to process an emergency from the initial user description to response preparation.
+https://resq-ai-ls67.onrender.com
+
+**Backend Health Check**
+
+https://resq-ai-ls67.onrender.com/api/health
 
 ---
 
-## 🎯 Why is RESQ AI Used?
+# 1. Project Overview
 
-During an emergency, a person may need to make several decisions quickly:
+During an emergency, users may need to make several decisions very quickly:
 
-- What type of emergency is happening?
-- How serious is the situation?
-- What should be done immediately?
-- Where is the nearest hospital?
-- What information should be communicated?
-- How can the emergency information be organized quickly?
+- Understand what type of emergency is occurring
+- Determine the severity of the situation
+- Know what immediate first-aid steps can be taken
+- Find a nearby hospital
+- Share important emergency information
+- Prepare an organized emergency report
 
-RESQ AI brings these tasks together into **one simple interface**.
+RESQ AI combines these tasks into one application.
 
-The system is designed to provide AI-assisted information and coordination while the user seeks professional emergency assistance.
+Instead of acting as a conventional chatbot that simply generates a response, RESQ AI uses an agentic workflow where specialized components perform different tasks and pass their results through the system.
 
----
-
-## ⚡ How RESQ AI Works
-
-The user can describe an emergency using **text or voice**.
-
-For example:
-
-> "A person has fallen from a bike and has heavy bleeding from their leg."
-
-RESQ AI processes the situation through an agentic workflow:
+### Core Workflow
 
 ```text
-Emergency Description
-        ↓
-AI Emergency Analysis
-        ↓
-Severity Assessment
-        ↓
-First Aid Guidance
-        ↓
-Real-Time Location
-        ↓
-Nearby Hospital Search
-        ↓
-Incident Report
-        ↓
-Emergency Alert Preparation
-        ↓
-Final Response
+User Emergency Description
+          |
+          v
+   Emergency Analysis
+          |
+          v
+   Severity Assessment
+          |
+          v
+     First Aid Agent
+          |
+          v
+   Hospital Search Tool
+          |
+          v
+   Incident Report Agent
+          |
+          v
+   Alert Preparation
+          |
+          v
+      Final Response
