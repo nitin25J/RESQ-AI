@@ -1,118 +1,220 @@
-# RESQ AI — Agentic Emergency Response System 🚨
+# RESQ AI
 
-RESQ AI is an intelligent, agentic emergency response assistant designed for rapid emergency situation analysis, immediate first-aid instructions, verified nearby hospital discovery, incident reporting, and pre-formatted SOS alert generation.
+## Agentic AI Emergency Response System
 
----
+RESQ AI is an Agentic AI-powered emergency response system designed to assist users during emergency situations by combining artificial intelligence, real-time location services, nearby hospital discovery, first-aid guidance, incident reporting, and emergency response preparation into a single workflow.
 
-## 🏗️ System Architecture
+The system analyzes a user's emergency description, determines the type and severity of the situation, provides immediate first-aid guidance, identifies nearby hospitals based on the user's current GPS location, generates a structured incident report, and prepares an emergency alert payload.
 
-```
-User Emergency Input (Text / Voice / GPS)
-                    ↓
-     Next.js Frontend (App Router, Tailwind CSS)
-                    ↓
-       FastAPI Backend API (/api/emergency/analyze)
-                    ↓
-     LangGraph Agentic Sequential Workflow
-       ├── 1. Emergency Analysis Agent (Gemini AI)
-       ├── 2. First Aid Agent (Gemini AI)
-       ├── 3. Hospital Search Tool (Google Places / OpenStreetMap / Nominatim)
-       ├── 4. Incident Report Agent
-       └── 5. Prepared SOS Alert Builder
-                    ↓
-      Structured Pydantic Emergency Response
-```
+> RESQ AI is an AI-assisted emergency response prototype. It does not replace doctors, paramedics, hospitals, ambulances, or emergency services.
 
 ---
 
-## ⚡ Key Features
+## Live Application
 
-- 🧠 **Agentic AI Analysis**: Uses Gemini 3.6 Flash via LangGraph orchestration for zero-hallucination emergency classification (Severity: `LOW`, `MEDIUM`, `HIGH`, `CRITICAL`).
-- 🩺 **Conservative First-Aid Guidance**: Generates clear step-by-step immediate actions, critical things to avoid, and country-specific emergency escalation (Dial `112` in India).
-- 🏥 **Dynamic GPS Hospital Discovery**: Strictly filters hospitals within a 25km radius centered on the user's exact latitude/longitude with Haversine distance sorting and Google Maps navigation links.
-- 📋 **Incident Report & Prepared SOS**: Pre-formats ready-to-dispatch emergency SOS payloads.
-- 🎯 **8 Exhibition Demo Presets**: Includes quick-fill scenarios for Bike Accident, Chest Pain, Severe Burn, Unconscious Person, Heavy Bleeding, Breathing Difficulty, Electric Shock, and Poisoning.
+**Live Application**
 
----
+https://resq-ai-emergency.vercel.app/
 
-## ☁️ Cloud Deployment Guide (Render + Vercel)
+**Backend API**
 
-### 1. Deploying Backend to Render 🚀
+https://resq-ai-ls67.onrender.com
 
-1. Go to **[Render Dashboard](https://dashboard.render.com)** → **New** → **Web Service**.
-2. Connect your GitHub repository (`nitin25J/RESQ-AI`).
-3. Configure settings:
-   - **Name**: `resq-ai-backend`
-   - **Root Directory**: `backend`
-   - **Environment**: `Python 3`
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-4. Add Environment Variables:
-   - `GEMINI_API_KEY`: *Your Gemini API Key*
-   - `GOOGLE_MAPS_API_KEY`: *(Optional) Your Google Places API Key*
-   - `CORS_ORIGINS`: `*`
-5. Click **Deploy Web Service**. Copy your backend URL (e.g. `https://resq-ai-backend.onrender.com`).
+**Backend Health Check**
+
+https://resq-ai-ls67.onrender.com/api/health
 
 ---
 
-### 2. Deploying Frontend to Vercel 🌐
+# 1. Project Overview
 
-1. Go to **[Vercel Dashboard](https://vercel.com/new)**.
-2. Import your GitHub repository (`nitin25J/RESQ-AI`).
-3. Set **Root Directory** to `frontend`.
-4. Add Environment Variable:
-   - `NEXT_PUBLIC_API_URL`: `https://resq-ai-backend.onrender.com` (Your Render Backend URL)
-5. Click **Deploy**. Vercel will build and launch your live frontend site!
+During an emergency, users may need to make several decisions very quickly:
 
----
+- Understand what type of emergency is occurring
+- Determine the severity of the situation
+- Know what immediate first-aid steps can be taken
+- Find a nearby hospital
+- Share important emergency information
+- Prepare an organized emergency report
 
-## 🚀 Local Development Setup
+RESQ AI combines these tasks into one application.
 
-### 1. Backend Setup
+Instead of acting as a conventional chatbot that simply generates a response, RESQ AI uses an agentic workflow where specialized components perform different tasks and pass their results through the system.
 
-```bash
-cd backend
-python -m venv venv
-# On Windows:
-venv\Scripts\activate
-# On Linux/macOS:
-source venv/bin/activate
+### Core Workflow
 
-pip install -r requirements.txt
-```
+```text
+User Emergency Description
+          |
+          v
+   Emergency Analysis
+          |
+          v
+   Severity Assessment
+          |
+          v
+     First Aid Agent
+          |
+          v
+   Hospital Search Tool
+          |
+          v
+   Incident Report Agent
+          |
+          v
+   Alert Preparation
+          |
+          v
+      Final Response
 
-Create a `.env` file in `backend/`:
-```env
-GEMINI_API_KEY=your_gemini_api_key_here
-GOOGLE_MAPS_API_KEY=optional_google_places_api_key_here
-```
 
-Start the FastAPI server:
-```bash
-uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
-```
+2. Project Structure
+RESQ-AI/
+│
+├── backend/
+│   ├── app/
+│   │   ├── agents/
+│   │   │   ├── analysis.py
+│   │   │   ├── first_aid.py
+│   │   │   ├── hospital_search.py
+│   │   │   ├── report.py
+│   │   │   ├── alert.py
+│   │   │   ├── graph.py
+│   │   │   └── state.py
+│   │   │
+│   │   ├── services/
+│   │   │   └── maps_service.py
+│   │   │
+│   │   ├── config.py
+│   │   ├── models.py
+│   │   └── main.py
+│   │
+│   ├── requirements.txt
+│   └── .env
+│
+├── frontend/
+│   ├── src/
+│   │   ├── app/
+│   │   ├── components/
+│   │   └── lib/
+│   │       └── api.ts
+│   │
+│   ├── package.json
+│   └── .env.local
 
-### 2. Frontend Setup
+3. Real-Time Location and Hospital Discovery
 
-```bash
-cd frontend
-npm install
-```
+RESQ AI uses the browser's Geolocation API to obtain the user's current latitude and longitude.
 
-Create a `.env.local` file in `frontend/`:
-```env
-NEXT_PUBLIC_API_URL=http://localhost:8000
-```
+Browser GPS
+     |
+     v
+Latitude + Longitude
+     |
+     v
+Frontend
+     |
+     v
+FastAPI
+     |
+     v
+Hospital Search Service
+     |
+     v
+Nearby Hospital Results
+     |
+     v
+Distance Validation
+     |
+     v
+Google Maps Navigation
 
-Start the Next.js development server:
-```bash
-npm run dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+4. Technology Stack
+Frontend
+Next.js
+TypeScript
+Tailwind CSS
+Lucide React
+Browser Geolocation API
+Web Speech API
+Backend
+Python
+FastAPI
+Pydantic
+HTTPX
+Uvicorn
+AI and Agent Orchestration
+Google Gemini API
+LangGraph
+Location and Maps
+Google Places API
+OpenStreetMap
+Overpass API
+Google Maps
+Deployment
+Vercel
+Render
+│
+└── README.md
 
----
 
-## 🛡️ Security Note
+ 5. Key Features
 
-All API keys are strictly maintained on the backend server only. No sensitive credentials or API keys are exposed to the browser or frontend bundle.
+### Emergency Analysis
+
+* Uses Google Gemini to analyze the emergency description.
+* Determines the emergency category.
+* Estimates the severity level.
+* Identifies key observations.
+* Provides immediate considerations.
+
+### First-Aid Guidance
+
+* Provides immediate, conservative first-aid guidance.
+* Tailors guidance according to the detected emergency category and severity.
+
+### Real-Time GPS
+
+* Uses browser-based geolocation to obtain the user's current location.
+* Uses latitude and longitude coordinates for location-based services.
+
+### Nearby Hospital Discovery
+
+* Searches for hospitals near the user's current location.
+* Uses geographic search services to identify relevant healthcare facilities.
+
+### Distance Calculation
+
+* Calculates the distance between the user and nearby hospitals.
+* Sorts hospitals based on proximity to the user.
+
+### Google Maps Navigation
+
+* Provides navigation links for selected hospitals.
+* Allows users to quickly open hospital directions in Google Maps.
+
+### Incident Report
+
+* Generates a concise, structured emergency incident report.
+* Organizes important information such as emergency type, severity, observations, and guidance.
+
+### Emergency Alert Preparation
+
+* Generates a structured emergency alert payload.
+* Prepares essential incident information for potential future notification or dispatch integrations.
+
+### Voice Input
+
+* Allows users to describe emergency situations using speech recognition.
+* Converts spoken input into text for emergency analysis.
+
+### Demo Presets
+
+* Provides predefined emergency scenarios.
+* Enables quick testing and demonstration of the system's capabilities.
+
+
+
+
+
