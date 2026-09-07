@@ -130,3 +130,64 @@ Vercel
 Render
 │
 └── README.md
+
+
+## 7. Key Features
+
+### Emergency Analysis
+
+* Uses Google Gemini to analyze the emergency description.
+* Determines the emergency category.
+* Estimates the severity level.
+* Identifies key observations.
+* Provides immediate considerations.
+
+### First-Aid Guidance
+
+* Provides immediate, conservative first-aid guidance.
+* Tailors guidance according to the detected emergency category and severity.
+
+### Real-Time GPS
+
+* Uses browser-based geolocation to obtain the user's current location.
+* Uses latitude and longitude coordinates for location-based services.
+
+### Nearby Hospital Discovery
+
+* Searches for hospitals near the user's current location.
+* Uses geographic search services to identify relevant healthcare facilities.
+
+### Distance Calculation
+
+* Calculates the distance between the user and nearby hospitals.
+* Sorts hospitals based on proximity to the user.
+
+### Google Maps Navigation
+
+* Provides navigation links for selected hospitals.
+* Allows users to quickly open hospital directions in Google Maps.
+
+### Incident Report
+
+* Generates a concise, structured emergency incident report.
+* Organizes important information such as emergency type, severity, observations, and guidance.
+
+### Emergency Alert Preparation
+
+* Generates a structured emergency alert payload.
+* Prepares essential incident information for potential future notification or dispatch integrations.
+
+### Voice Input
+
+* Allows users to describe emergency situations using speech recognition.
+* Converts spoken input into text for emergency analysis.
+
+### Demo Presets
+
+* Provides predefined emergency scenarios.
+* Enables quick testing and demonstration of the system's capabilities.
+
+
+
+
+
