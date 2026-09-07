@@ -66,3 +66,40 @@ User Emergency Description
           |
           v
       Final Response
+
+
+2. Project Structure
+RESQ-AI/
+│
+├── backend/
+│   ├── app/
+│   │   ├── agents/
+│   │   │   ├── analysis.py
+│   │   │   ├── first_aid.py
+│   │   │   ├── hospital_search.py
+│   │   │   ├── report.py
+│   │   │   ├── alert.py
+│   │   │   ├── graph.py
+│   │   │   └── state.py
+│   │   │
+│   │   ├── services/
+│   │   │   └── maps_service.py
+│   │   │
+│   │   ├── config.py
+│   │   ├── models.py
+│   │   └── main.py
+│   │
+│   ├── requirements.txt
+│   └── .env
+│
+├── frontend/
+│   ├── src/
+│   │   ├── app/
+│   │   ├── components/
+│   │   └── lib/
+│   │       └── api.ts
+│   │
+│   ├── package.json
+│   └── .env.local
+│
+└── README.md
