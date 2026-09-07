@@ -7,7 +7,7 @@ export async function analyzeEmergency(payload: EmergencyPayload): Promise<Emerg
 
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 25000); // 25s timeout limit
+    const timeoutId = setTimeout(() => controller.abort(), 50000); // 50s timeout to allow for Render free tier cold starts
 
     const response = await fetch(endpoint, {
       method: "POST",
