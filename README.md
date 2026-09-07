@@ -102,8 +102,35 @@ RESQ-AI/
 │   ├── package.json
 │   └── .env.local
 
+3. Real-Time Location and Hospital Discovery
 
-3. Technology Stack
+RESQ AI uses the browser's Geolocation API to obtain the user's current latitude and longitude.
+
+Browser GPS
+     |
+     v
+Latitude + Longitude
+     |
+     v
+Frontend
+     |
+     v
+FastAPI
+     |
+     v
+Hospital Search Service
+     |
+     v
+Nearby Hospital Results
+     |
+     v
+Distance Validation
+     |
+     v
+Google Maps Navigation
+
+
+4. Technology Stack
 Frontend
 Next.js
 TypeScript
@@ -132,7 +159,7 @@ Render
 └── README.md
 
 
-## 4. Key Features
+ 5. Key Features
 
 ### Emergency Analysis
 
