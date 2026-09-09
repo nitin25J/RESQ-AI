@@ -1,6 +1,6 @@
 import { EmergencyPayload, EmergencyResponse } from "@/types/emergency";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://resq-ai-ls67.onrender.com";
 
 export async function analyzeEmergency(payload: EmergencyPayload): Promise<EmergencyResponse> {
   const endpoint = `${API_BASE_URL}/api/emergency/analyze`;

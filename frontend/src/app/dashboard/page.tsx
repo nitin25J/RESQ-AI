@@ -6,7 +6,7 @@ import { Header } from "@/components/Header";
 import { checkBackendHealth } from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://resq-ai-ls67.onrender.com";
 
 interface DispatchAlert {
   dispatch_id: string;
