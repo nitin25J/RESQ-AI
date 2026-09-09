@@ -1,3 +1,8 @@
+databases:
+  - name: resq-ai-db
+    databaseName: resqai
+    user: resq_user
+
 services:
   - type: web
     name: resq-ai-backend
@@ -13,3 +18,7 @@ services:
         sync: false
       - key: CORS_ORIGINS
         value: "*"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: resq-ai-db
+          property: connectionString

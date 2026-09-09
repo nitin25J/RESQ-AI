@@ -16,6 +16,12 @@ class Settings:
     )
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "").strip()
     GOOGLE_MAPS_API_KEY: str = os.getenv("GOOGLE_MAPS_API_KEY", "").strip()
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./resq_ai.db").strip()
+    _raw_url = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./resq_ai.db").strip()
+    if _raw_url.startswith("postgres://"):
+        DATABASE_URL = _raw_url.replace("postgres://", "postgresql+asyncpg://", 1)
+    elif _raw_url.startswith("postgresql://") and not _raw_url.startswith("postgresql+asyncpg://"):
+        DATABASE_URL = _raw_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+    else:
+        DATABASE_URL = _raw_url
 
 settings = Settings()
