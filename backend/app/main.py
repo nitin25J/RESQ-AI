@@ -13,6 +13,11 @@ from app.agents.graph import emergency_graph
 from app.database import engine, Base, get_db
 from app.db_models import EmergencyHistory, AlertHistory, DiseaseDataset
 
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+import seed_data
+
 # Configure Logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("resq_ai")
@@ -22,6 +27,11 @@ logger = logging.getLogger("resq_ai")
 async def lifespan(app: FastAPI):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+    try:
+        await seed_data.seed()
+        logger.info("Auto-seeded database on startup.")
+    except Exception as e:
+        logger.error(f"Failed to auto-seed database: {e}")
     yield
     await engine.dispose()
 
