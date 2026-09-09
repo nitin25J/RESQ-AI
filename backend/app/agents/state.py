@@ -1,4 +1,4 @@
-from typing import TypedDict, List, Optional
+from typing import TypedDict, List, Optional, Dict
 from app.models import (
     EmergencyAnalysis,
     FirstAidGuidance,
@@ -12,6 +12,7 @@ class EmergencyState(TypedDict):
     description: str
     latitude: Optional[float]
     longitude: Optional[float]
+    triage_answers: Optional[Dict[str, str]]
 
     # Sequential Node Outputs
     analysis: Optional[EmergencyAnalysis]

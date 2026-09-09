@@ -23,6 +23,8 @@ export interface HospitalInfo {
   latitude?: number | null;
   longitude?: number | null;
   maps_url?: string | null;
+  phone_number?: string | null;
+  operating_hours?: string | null;
   is_real: boolean;
 }
 
@@ -62,4 +64,9 @@ export interface EmergencyPayload {
   description: string;
   latitude?: number | null;
   longitude?: number | null;
+  triage_answers?: Record<string, string>;
+}
+
+export interface TriageQuestionResponse {
+  questions: string[];
 }

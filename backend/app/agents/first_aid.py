@@ -10,7 +10,9 @@ from app.agents.state import EmergencyState
 logger = logging.getLogger("resq_ai.agents.first_aid")
 
 FIRST_AID_PROMPT = """
-You are a conservative First Aid AI Agent for RESQ AI.
+You are a highly accurate, conservative First Aid AI Agent for RESQ AI.
+Your primary objective is to provide strictly accurate, medically sound first-aid instructions based on official guidelines from organizations like the Red Cross, American Heart Association (AHA), and World Health Organization (WHO).
+
 Given the emergency analysis below, generate safe, immediate first-aid instructions.
 
 Emergency Type: {emergency_type}
@@ -21,12 +23,12 @@ Bleeding: {visible_bleeding}
 Breathing Concern: {breathing_concern}
 
 CRITICAL GUARDRAILS:
-1. Provide 3-5 concise `immediate_actions`.
-2. Provide 2-4 `things_to_avoid` (e.g., do not give water to unconscious victims, do not apply ice directly to burns, do not move victim if spinal injury suspected).
+1. Provide 3-5 concise, highly accurate `immediate_actions`. They must reflect standard medical consensus (e.g., CPR protocols, direct pressure for bleeding, epi-pen for anaphylaxis).
+2. Provide 2-4 `things_to_avoid` that prevent common misconceptions or harmful actions (e.g., do not give water to unconscious victims, do not apply ice directly to burns, do not remove tourniquets once applied).
 3. Do NOT diagnose medical conditions.
-4. Do NOT prescribe medications or dosages.
-5. Do NOT claim medical certainty.
-6. For HIGH or CRITICAL severity, recommend contacting emergency services immediately (Mention India's 112 emergency number).
+4. Do NOT prescribe medications or dosages, except advising the use of a patient's own prescribed emergency medication (like an inhaler or EpiPen) if relevant.
+5. Do NOT claim medical certainty. Keep instructions clear and actionable.
+6. For HIGH or CRITICAL severity, recommend contacting emergency services immediately (Mention India's 112 / 108 emergency numbers).
 
 Return ONLY valid JSON matching this structure:
 {{
@@ -85,8 +87,8 @@ async def run_first_aid_agent(state: EmergencyState) -> Dict[str, Any]:
         response = None
         for attempt in range(2):
             try:
-                response = client.models.generate_content(
-                    model='gemini-3.6-flash',
+                response = await client.aio.models.generate_content(
+                    model='gemini-1.5-flash',
                     contents=prompt,
                     config={'response_mime_type': 'application/json'}
                 )

@@ -22,7 +22,6 @@ export default function Home() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isBackendHealthy, setIsBackendHealthy] = useState(true);
 
-  // Check health on mount
   useEffect(() => {
     async function verifyHealth() {
       const health = await checkBackendHealth();
@@ -40,28 +39,18 @@ export default function Home() {
     setDescription(presetText);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (triageAnswers?: Record<string, string>) => {
     if (!description.trim()) return;
-
     setIsLoading(true);
     setErrorMessage(null);
-
-    const res = await analyzeEmergency({
-      description,
-      latitude,
-      longitude,
-    });
-
+    const res = await analyzeEmergency({ description, latitude, longitude, triage_answers: triageAnswers });
     setIsLoading(false);
 
     if (res.success && res.analysis) {
       setResponse(res);
-      // Smooth scroll to results
       setTimeout(() => {
         const resultsEl = document.getElementById("results-section");
-        if (resultsEl) {
-          resultsEl.scrollIntoView({ behavior: "smooth" });
-        }
+        if (resultsEl) resultsEl.scrollIntoView({ behavior: "smooth" });
       }, 100);
     } else {
       setErrorMessage(res.error || "Failed to analyze emergency. Please try again.");
@@ -69,101 +58,94 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-red-500 selection:text-white">
-      {/* Header Banner */}
+    <div className="min-h-screen flex flex-col font-sans relative">
       <Header isBackendHealthy={isBackendHealthy} />
 
-      {/* Main Content Area */}
-      <main className="flex-1 max-w-5xl w-full mx-auto px-4 py-8 sm:px-6 space-y-8">
+      <main className="flex-1 w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 relative z-10">
         
-        {/* Main Emergency Input Card */}
-        <section className="space-y-4">
-          <div className="text-center sm:text-left">
-            <h2 className="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
-              Emergency Response Assistant
+        <div className="max-w-6xl mx-auto space-y-12">
+          
+          <section className="space-y-6 max-w-4xl mx-auto text-center sm:text-left mt-4 mb-8 animate-slide-up">
+            <h2 className="text-4xl sm:text-6xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-slate-900 via-slate-800 to-slate-500 dark:from-white dark:via-slate-200 dark:to-slate-500 pb-2 transition-colors">
+              Agentic Emergency Response
             </h2>
-            <p className="text-sm text-slate-400 mt-1">
-              Describe the medical or safety situation below for immediate AI analysis, first aid guidance, nearby hospital navigation, and SOS alert dispatch payload.
+            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed transition-colors">
+              Describe the medical or safety situation below. AI will instantly synthesize severity, first aid guidance, nearest verified hospitals, and prepare an SOS payload.
             </p>
-          </div>
-
-          {/* Exhibition Demo Presets */}
-          <DemoPresets onSelectPreset={handlePresetSelect} disabled={isLoading} />
-
-          {/* Emergency Text/Voice/Location Input Box */}
-          <EmergencyInput
-            description={description}
-            setDescription={setDescription}
-            latitude={latitude}
-            longitude={longitude}
-            setLocation={handleLocationChange}
-            onSubmit={handleSubmit}
-            isLoading={isLoading}
-          />
-        </section>
-
-        {/* Global Error Notice Banner */}
-        {errorMessage && (
-          <div className="bg-red-950/80 border border-red-600/80 rounded-2xl p-4 flex items-center justify-between gap-3 text-red-200 shadow-xl">
-            <div className="flex items-center gap-3">
-              <AlertTriangle className="w-5 h-5 text-red-400 shrink-0" />
-              <p className="text-sm font-medium">{errorMessage}</p>
-            </div>
-            <button
-              onClick={handleSubmit}
-              className="text-xs px-3 py-1.5 rounded-lg bg-red-900 hover:bg-red-800 text-white font-semibold transition shrink-0 flex items-center gap-1"
-            >
-              <RefreshCw className="w-3.5 h-3.5" />
-              Retry
-            </button>
-          </div>
-        )}
-
-        {/* Loading Indicator Indicator Bar */}
-        {isLoading && (
-          <div className="bg-slate-900/90 border border-red-600/40 rounded-2xl p-6 text-center space-y-3 shadow-2xl backdrop-blur animate-pulse">
-            <div className="w-10 h-10 rounded-full bg-red-600/20 text-red-500 border border-red-500/40 flex items-center justify-center mx-auto">
-              <Activity className="w-6 h-6 animate-spin" />
-            </div>
-            <div>
-              <h3 className="text-base font-bold text-white">RESQ AI Agentic Pipeline Executing...</h3>
-              <p className="text-xs text-slate-400 mt-1">
-                Analyzing emergency prompt • Generating safe first aid guidance • Searching nearby hospitals • Synthesizing incident report
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Results Section */}
-        {response && response.analysis && (
-          <section id="results-section" className="space-y-6 pt-4 border-t border-slate-800/80">
-            {/* 1. Severity & Category Badge */}
-            <SeverityBadge analysis={response.analysis} />
-
-            {/* 2. First Aid Guidance */}
-            {response.first_aid && <FirstAidCard guidance={response.first_aid} />}
-
-            {/* 3. Nearby Hospitals */}
-            <HospitalList
-              hospitals={response.hospitals}
-              statusMessage={response.hospital_search_status}
-              hasLocation={latitude !== null && longitude !== null}
-            />
-
-            {/* 4. Incident Summary Report */}
-            {response.report && <ReportCard report={response.report} />}
-
-            {/* 5. Prepared SOS Alert */}
-            {response.alert && <AlertModal alert={response.alert} />}
           </section>
-        )}
+
+          <section className="max-w-4xl mx-auto space-y-6 relative z-20 animate-slide-up animate-delay-100">
+            <DemoPresets onSelectPreset={handlePresetSelect} disabled={isLoading} />
+            <EmergencyInput
+              description={description}
+              setDescription={setDescription}
+              latitude={latitude}
+              longitude={longitude}
+              setLocation={handleLocationChange}
+              onSubmit={handleSubmit}
+              isLoading={isLoading}
+            />
+          </section>
+
+
+
+          {errorMessage && (
+            <div className="max-w-4xl mx-auto bg-red-50/80 dark:bg-red-950/50 backdrop-blur-xl border border-red-200/60 dark:border-red-900/50 rounded-[2rem] p-5 flex items-center justify-between gap-3 text-red-900 dark:text-red-200 animate-slide-up shadow-sm">
+              <div className="flex items-center gap-3">
+                <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0" />
+                <p className="text-sm font-semibold">{errorMessage}</p>
+              </div>
+              <button
+                onClick={handleSubmit}
+                className="text-xs px-5 py-2.5 rounded-xl bg-white dark:bg-red-900 hover:bg-red-50 dark:hover:bg-red-800 text-red-700 dark:text-red-100 font-bold transition shrink-0 flex items-center gap-1.5 border border-red-200 dark:border-red-800 shadow-sm"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                Retry
+              </button>
+            </div>
+          )}
+
+          {isLoading && (
+            <div className="max-w-4xl mx-auto ambient-card p-12 text-center space-y-5 animate-slide-up">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-brand-100 to-brand-50 dark:from-brand-900 dark:to-brand-800 text-brand-600 dark:text-brand-300 flex items-center justify-center mx-auto shadow-inner border border-brand-200 dark:border-brand-700">
+                <Activity className="w-8 h-8 animate-spin" />
+              </div>
+              <div>
+                <h3 className="text-xl font-black text-slate-900 dark:text-white bg-clip-text text-transparent bg-gradient-to-r from-brand-600 to-purple-600 dark:from-brand-400 dark:to-purple-400">Analyzing Scenario...</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 font-semibold">
+                  Synthesizing protocols • Locating dispatch centers • Preparing response
+                </p>
+              </div>
+            </div>
+          )}
+
+          {response && response.analysis && (
+            <section id="results-section" className="pt-4">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
+                <div className="lg:col-span-5 space-y-6 sm:space-y-8 animate-slide-up animate-delay-200">
+                  <SeverityBadge analysis={response.analysis} />
+                  {response.report && <ReportCard report={response.report} />}
+                  {response.alert && <AlertModal alert={response.alert} />}
+                </div>
+                <div className="lg:col-span-7 space-y-6 sm:space-y-8 animate-slide-up animate-delay-300">
+                  {response.first_aid && <FirstAidCard guidance={response.first_aid} />}
+                  <HospitalList
+                    hospitals={response.hospitals}
+                    statusMessage={response.hospital_search_status}
+                    hasLocation={latitude !== null && longitude !== null}
+                  />
+                </div>
+              </div>
+            </section>
+          )}
+
+        </div>
       </main>
 
-      {/* Modern Minimal Footer */}
-      <footer className="w-full border-t border-slate-800/60 bg-slate-950 py-6 px-4 text-center text-xs text-slate-500">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p>© RESQ AI — Agentic Emergency Response System (College Exhibition Prototype)</p>
-          <p className="text-slate-400">In a real life-threatening emergency, dial <strong>112</strong> immediately.</p>
+      <footer className="w-full bg-white/40 dark:bg-slate-950/40 backdrop-blur-md border-t border-slate-200/50 dark:border-slate-800/50 py-8 px-4 text-center text-xs text-slate-500 dark:text-slate-400 mt-auto relative z-10 transition-colors">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="font-semibold">© RESQ AI — Agentic Emergency Response System</p>
+          <p className="font-semibold text-slate-600 dark:text-slate-400">In a real life-threatening emergency, dial <strong className="text-brand-600 dark:text-brand-400">112</strong> immediately.</p>
         </div>
       </footer>
     </div>

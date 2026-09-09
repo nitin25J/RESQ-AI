@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Dict
 from pydantic import BaseModel, Field, field_validator
 
 # --- Health Models ---
@@ -9,10 +9,17 @@ class HealthResponse(BaseModel):
 
 # --- Emergency Flow Input / Output Models ---
 
+class TriageQuestionRequest(BaseModel):
+    description: str = Field(..., min_length=1, description="User narrative describing the emergency")
+
+class TriageQuestionResponse(BaseModel):
+    questions: List[str] = Field(..., description="3 to 4 dynamic Yes/No questions based on the emergency")
+
 class EmergencyRequest(BaseModel):
     description: str = Field(..., min_length=1, description="User narrative describing the emergency")
     latitude: Optional[float] = Field(default=None, description="User latitude coordinate")
     longitude: Optional[float] = Field(default=None, description="User longitude coordinate")
+    triage_answers: Optional[Dict[str, str]] = Field(default=None, description="User answers to the dynamically generated triage questions")
 
     @field_validator("description")
     @classmethod
@@ -42,6 +49,8 @@ class HospitalInfo(BaseModel):
     latitude: Optional[float] = Field(default=None)
     longitude: Optional[float] = Field(default=None)
     maps_url: Optional[str] = Field(default=None, description="Direct Google Maps search/directions URL")
+    phone_number: Optional[str] = Field(default=None, description="Hospital contact number")
+    operating_hours: Optional[str] = Field(default="Open 24/7", description="Operating hours of the hospital")
     is_real: bool = Field(default=True, description="Indicates verified real hospital data")
 
 class EmergencyReport(BaseModel):
@@ -70,3 +79,15 @@ class EmergencyResponse(BaseModel):
     report: Optional[EmergencyReport] = None
     alert: Optional[PreparedAlert] = None
     error: Optional[str] = Field(default=None)
+
+# --- Messaging Gateway Models ---
+
+class AlertDispatchRequest(BaseModel):
+    formatted_text: str = Field(..., description="The raw SOS text payload to dispatch")
+    severity: str = Field(..., description="Emergency severity level")
+    emergency_type: str = Field(..., description="The type of emergency")
+
+class AlertDispatchResponse(BaseModel):
+    success: bool = Field(default=True)
+    message: str = Field(..., description="Status message")
+    dispatch_id: Optional[str] = Field(default=None, description="Mock tracking ID for the dispatched alert")

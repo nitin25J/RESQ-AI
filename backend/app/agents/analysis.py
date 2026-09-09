@@ -11,9 +11,12 @@ logger = logging.getLogger("resq_ai.agents.analysis")
 
 ANALYSIS_PROMPT = """
 You are an expert Emergency Analysis AI Agent for RESQ AI.
-Your task is to analyze the user's emergency description and return a JSON object.
+Your task is to analyze the user's emergency description along with their direct answers to specific triage questions, and return a JSON object.
 
 User Description: "{description}"
+
+Explicit Triage Answers:
+{triage_answers_text}
 
 Rules:
 1. Determine `emergency_type` (e.g., "Cardiac Emergency", "Trauma / Heavy Bleeding", "Thermal Burn", "Respiratory Distress", "General Medical Emergency").
@@ -22,12 +25,12 @@ Rules:
    - HIGH: Fractures, deep wounds, severe burns, chest pain, breathing difficulty.
    - MEDIUM: Sprains, moderate cuts, mild burns, fever.
    - LOW: Minor scrapes, mild discomfort.
-3. Extract 2-5 concise `observations`.
-4. State `victim_conscious`: "Yes" if stated conscious, "No" if stated unconscious, "Unknown" if not mentioned.
-5. State `visible_bleeding`: "Yes" if bleeding mentioned, "No" if explicitly no bleeding, "Unknown" if not mentioned.
-6. State `breathing_concern`: "Yes" if breathing issue mentioned, "No" if breathing fine, "Unknown" if not mentioned.
+3. Extract 2-5 concise `observations`. Incorporate facts from the Explicit Triage Answers.
+4. State `victim_conscious`: "Yes" / "No" / "Unknown" based heavily on the Triage Answers if provided, else infer from description.
+5. State `visible_bleeding`: "Yes" / "No" / "Unknown" based heavily on the Triage Answers if provided, else infer from description.
+6. State `breathing_concern`: "Yes" / "No" / "Unknown" based heavily on the Triage Answers if provided, else infer from description.
 
-DO NOT FABRICATE facts not present in the user text. Distinguish unknown facts cleanly as "Unknown".
+DO NOT FABRICATE facts not present in the user text or triage answers. Distinguish unknown facts cleanly as "Unknown".
 
 Return ONLY valid JSON matching this structure:
 {{
@@ -43,6 +46,9 @@ Return ONLY valid JSON matching this structure:
 async def run_analysis_agent(state: EmergencyState) -> Dict[str, Any]:
     """Node: Analyzes user description using Gemini AI structured output."""
     description = state.get("description", "")
+
+    triage_answers = state.get("triage_answers") or {}
+    triage_answers_text = "\n".join([f"- Q: {q}\n  A: {a}" for q, a in triage_answers.items()]) if triage_answers else "None provided."
 
     if not settings.GEMINI_API_KEY:
         logger.warning("GEMINI_API_KEY missing. Returning structured fallback analysis.")
@@ -61,13 +67,13 @@ async def run_analysis_agent(state: EmergencyState) -> Dict[str, Any]:
         from google import genai
         client = genai.Client(api_key=settings.GEMINI_API_KEY)
         
-        prompt = ANALYSIS_PROMPT.format(description=description)
+        prompt = ANALYSIS_PROMPT.format(description=description, triage_answers_text=triage_answers_text)
         
         response = None
         for attempt in range(2):
             try:
-                response = client.models.generate_content(
-                    model='gemini-3.6-flash',
+                response = await client.aio.models.generate_content(
+                    model='gemini-1.5-flash',
                     contents=prompt,
                     config={'response_mime_type': 'application/json'}
                 )
@@ -104,15 +110,39 @@ async def run_analysis_agent(state: EmergencyState) -> Dict[str, Any]:
 
     except Exception as e:
         logger.error(f"Gemini Analysis Agent error: {e}. Using fallback analysis.")
+        
+        # Parse triage_answers for fallback to avoid "Unknown" tags during API Rate Limits
+        triage_answers = state.get("triage_answers") or {}
+        v_conscious = "Unknown"
+        v_bleeding = "Unknown"
+        v_breathing = "Unknown"
+        
+        for q, a in triage_answers.items():
+            ql = q.lower()
+            if "conscious" in ql or "respond" in ql:
+                v_conscious = a
+            elif "bleed" in ql or "blood" in ql:
+                v_bleeding = a
+            elif "breath" in ql or "chok" in ql:
+                v_breathing = a
+
         # Fallback to simple rules engine if LLM fails
         desc_lower = description.lower()
-        sev = "CRITICAL" if any(w in desc_lower for w in ["unconscious", "bleeding heavily", "stroke", "cardiac", "chest pain"]) else "HIGH"
+        sev = "CRITICAL" if any(w in desc_lower for w in ["unconscious", "bleeding heavily", "stroke", "cardiac", "chest pain"]) or v_conscious == "No" or v_breathing == "No" else "HIGH"
+        
+        if v_conscious == "Unknown":
+            v_conscious = "No" if "unconscious" in desc_lower else ("Yes" if "conscious" in desc_lower else "Unknown")
+        if v_bleeding == "Unknown":
+            v_bleeding = "Yes" if "bleed" in desc_lower else "Unknown"
+        if v_breathing == "Unknown":
+            v_breathing = "Yes" if "breath" in desc_lower else "Unknown"
+
         fallback = EmergencyAnalysis(
             emergency_type="Medical Emergency",
             severity=sev,
-            observations=[description[:100]],
-            victim_conscious="No" if "unconscious" in desc_lower else ("Yes" if "conscious" in desc_lower else "Unknown"),
-            visible_bleeding="Yes" if "bleed" in desc_lower else "Unknown",
-            breathing_concern="Yes" if "breath" in desc_lower else "Unknown"
+            observations=["Emergency reported", "API Rate Limit active. Used manual fallback triage."],
+            victim_conscious=v_conscious,
+            visible_bleeding=v_bleeding,
+            breathing_concern=v_breathing
         )
         return {"analysis": fallback}

@@ -16,5 +16,6 @@ class Settings:
     )
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "").strip()
     GOOGLE_MAPS_API_KEY: str = os.getenv("GOOGLE_MAPS_API_KEY", "").strip()
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/postgres").strip()
 
 settings = Settings()
