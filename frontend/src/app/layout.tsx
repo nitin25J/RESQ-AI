@@ -36,6 +36,9 @@ export const metadata: Metadata = {
     description: "AI-powered emergency response assistant providing instant severity classification, safe first aid protocols, nearby hospital navigation, and SOS alert preparation.",
     images: ["https://resq-ai.com/og-image.jpg"],
   },
+};
+
+export const viewport = {
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#f8fafc" },
     { media: "(prefers-color-scheme: dark)", color: "#020617" },

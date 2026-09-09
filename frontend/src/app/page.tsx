@@ -96,7 +96,7 @@ export default function Home() {
                 <p className="text-sm font-semibold">{errorMessage}</p>
               </div>
               <button
-                onClick={handleSubmit}
+                onClick={() => handleSubmit()}
                 className="text-xs px-5 py-2.5 rounded-xl bg-white dark:bg-red-900 hover:bg-red-50 dark:hover:bg-red-800 text-red-700 dark:text-red-100 font-bold transition shrink-0 flex items-center gap-1.5 border border-red-200 dark:border-red-800 shadow-sm"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
