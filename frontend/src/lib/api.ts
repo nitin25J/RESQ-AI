@@ -117,7 +117,7 @@ export async function autoDispatchAlert(formatted_text: string, severity: string
 
     const data: DispatchResponse = await response.json();
     return data;
-  } catch (error) {
+  } catch {
     return { success: false, message: "Network error connecting to dispatch gateway." };
   }
 }

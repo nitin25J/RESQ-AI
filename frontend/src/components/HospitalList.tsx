@@ -2,7 +2,7 @@
 
 import React from "react";
 import { HospitalInfo } from "@/types/emergency";
-import { Building2, Navigation, MapPinOff, CheckCircle2, Phone, Clock } from "lucide-react";
+import { Building2, Navigation, MapPinOff, CheckCircle2, Phone } from "lucide-react";
 
 interface HospitalListProps {
   hospitals: HospitalInfo[];
@@ -42,7 +42,7 @@ export const HospitalList: React.FC<HospitalListProps> = ({ hospitals, statusMes
           </div>
           <p className="text-lg font-black text-slate-800 dark:text-slate-200">Location Access Required</p>
           <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm mt-2 font-semibold">
-            Please enable location services and click "Use Location" above to discover nearby emergency medical facilities.
+            Please enable location services and click &quot;Use Location&quot; above to discover nearby emergency medical facilities.
           </p>
         </div>
       )}

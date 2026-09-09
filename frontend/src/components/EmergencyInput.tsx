@@ -18,7 +18,6 @@ export const EmergencyInput: React.FC<EmergencyInputProps> = ({
   description,
   setDescription,
   latitude,
-  longitude,
   setLocation,
   onSubmit,
   isLoading,
@@ -47,14 +46,11 @@ export const EmergencyInput: React.FC<EmergencyInputProps> = ({
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         recognitionRef.current.onresult = (event: any) => {
-          let interimTranscript = "";
           let finalTranscript = "";
 
           for (let i = event.resultIndex; i < event.results.length; ++i) {
             if (event.results[i].isFinal) {
               finalTranscript += event.results[i][0].transcript;
-            } else {
-              interimTranscript += event.results[i][0].transcript;
             }
           }
 
@@ -164,7 +160,7 @@ export const EmergencyInput: React.FC<EmergencyInputProps> = ({
             <button
               type="button"
               onClick={toggleListening}
-              disabled={isLoading || !recognitionRef.current || isGeneratingQuestions}
+              disabled={isLoading || isGeneratingQuestions}
               className={`flex-1 sm:flex-none text-sm font-bold px-5 py-3 rounded-xl border transition-all flex items-center justify-center gap-2 ${
                 isListening
                   ? "bg-brand-50 dark:bg-brand-950/50 text-brand-600 dark:text-brand-400 border-brand-200 dark:border-brand-800 shadow-inner"

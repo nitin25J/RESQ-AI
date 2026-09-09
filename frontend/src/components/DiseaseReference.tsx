@@ -120,7 +120,7 @@ export const DiseaseReference: React.FC = () => {
                   ))}
                   {filteredDiseases.length === 0 && (
                     <div className="col-span-full text-center py-12 text-slate-500 font-medium">
-                      No emergencies found matching "{searchQuery}"
+                      No emergencies found matching &quot;{searchQuery}&quot;
                     </div>
                   )}
                 </div>
