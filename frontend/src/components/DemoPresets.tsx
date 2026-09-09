@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Sparkles, Activity, ShieldAlert, HeartPulse, Flame, Droplets, Zap, Brain, Bone, ThermometerSun } from "lucide-react";
+import { Sparkles, Activity, ShieldAlert, HeartPulse, Flame, Droplets, Brain } from "lucide-react";
 import { fetchCommonDiseases, Disease } from "@/lib/api";
 
 interface DemoPresetsProps {
