@@ -1,148 +1,109 @@
-🚨 RESQ AI
+RESQ AI
 
-Ambient Emergency Response — AI-Powered Emergency Triage & Response Platform
+Agentic AI Emergency Response Platform
 
-RESQ AI is a full-stack, AI-powered emergency response platform designed to reduce the time between an emergency being reported and appropriate assistance being initiated.
+RESQ AI is a full-stack Agentic AI emergency response platform designed to assist users during emergency situations.
 
-It combines AI emergency triage, dynamic questioning, first-aid guidance, GPS-based hospital discovery, automated SOS preparation, and real-time dispatcher monitoring into a single system.
+It combines AI emergency triage, first-aid guidance, real-time GPS, nearby hospital discovery, SOS preparation, incident reporting, and real-time dispatcher monitoring into a single workflow.
 
-RESQ AI is designed to assist during emergencies, not replace professional emergency services or medical professionals.
+RESQ AI is designed to assist during emergencies and does not replace professional medical services.
 
-🌟 Why RESQ AI?
+Live Application
 
-During an emergency, people often face three immediate problems:
+Frontend: https://resq-ai-emergency.vercel.app/
 
-❓ What is happening and how serious is it?
+Backend API: https://resq-ai-ls67.onrender.com
 
-🩹 What should I do right now?
+Health Check: https://resq-ai-ls67.onrender.com/api/health
 
-🏥 Where is the nearest suitable medical facility?
+What RESQ AI Does
 
-RESQ AI brings these steps together into one guided workflow.
+During an emergency, users may need to quickly determine:
 
-Instead of requiring a user or bystander to manually interpret the situation, search for hospitals, prepare an SOS message, and communicate the emergency separately, RESQ AI coordinates these actions through an AI-driven workflow.
+What is happening?
 
-🧠 Core Concept
+How serious is the situation?
+
+What should be done immediately?
+
+Where is the nearest hospital?
+
+What information should be communicated to responders?
+
+RESQ AI brings these tasks together through an AI-driven workflow.
+
+Core Workflow
 
 Emergency Report
-       │
-       ▼
- Dynamic Triage
-       │
-       ▼
-   AI Analysis
-       │
-       ├──────────────► Severity / Emergency Type
-       │
-       ▼
- First-Aid Guidance
-       │
-       ▼
- Hospital Discovery
-       │
-       ▼
- SOS / Alert Preparation
-       │
-       ▼
- Real-Time Dispatcher
-       │
-       ▼
- Human Response
+       |
+       v
+Dynamic Triage
+       |
+       v
+AI Emergency Analysis
+       |
+       +------> Emergency Type
+       +------> Severity
+       +------> Key Observations
+       |
+       v
+First-Aid Guidance
+       |
+       v
+Nearby Hospital Discovery
+       |
+       v
+SOS / Alert Preparation
+       |
+       v
+Dispatcher Dashboard
+       |
+       v
+Human Response
 
-✨ Key Features
+Key Features
 
-🧠 AI Emergency Triage
+AI Emergency Triage
 
-RESQ AI uses Google Gemini 2.5 Flash to analyze emergency information and determine important characteristics of the incident.
+Analyzes emergency descriptions using Google Gemini.
 
-The system can identify:
+Determines emergency category and severity.
 
-Emergency category
+Identifies important observations.
 
-Severity level
+Generates relevant follow-up questions when required.
 
-Key observations
+First-Aid Guidance
 
-Relevant considerations
+Provides immediate, situation-specific guidance.
 
-Information requiring further clarification
+Presents concise and actionable steps.
 
-❓ Dynamic Triage Questions
+Uses a conservative, safety-focused approach.
 
-Instead of asking every user the same set of questions, the system can generate questions based on the initial emergency description.
+Real-Time Location
 
-This helps collect information that is relevant to the specific situation.
+Uses browser GPS to obtain the user's current location.
 
-Example:
+Supports hospital discovery.
 
-User:
-"My father suddenly collapsed and is not responding."
+Calculates approximate distance to hospitals.
 
-        ↓
+Provides location information for emergency reporting.
 
-AI-generated triage questions
+Nearby Hospital Discovery
 
-        ↓
+Uses Google Maps Places API.
 
-Relevant information is collected
+Finds hospitals based on the user's current location.
 
-        ↓
+Sorts hospitals according to proximity.
 
-Emergency severity is assessed
+Provides navigation information.
 
-🩹 AI-Powered First-Aid Guidance
+Emergency Alert Preparation
 
-RESQ AI generates immediate, situation-specific first-aid guidance based on the analyzed emergency.
-
-The objective is to provide clear, actionable steps while professional medical assistance is being arranged.
-
-Guidance is intended to be:
-
-Immediate
-
-Step-by-step
-
-Situation-specific
-
-Easy to understand
-
-Conservative and safety-focused
-
-📍 Real-Time GPS Location
-
-The application can use browser geolocation to obtain the user's current coordinates.
-
-These coordinates can then be used for:
-
-Hospital discovery
-
-Distance calculation
-
-Emergency location reporting
-
-Dispatcher situational awareness
-
-🏥 Nearby Hospital Discovery
-
-RESQ AI integrates with the Google Maps Places API to discover nearby hospitals.
-
-The system can:
-
-Receive the user's coordinates.
-
-Search for nearby medical facilities.
-
-Retrieve hospital locations.
-
-Calculate approximate distances.
-
-Sort hospitals based on proximity.
-
-🚨 Intelligent SOS Preparation
-
-For emergencies classified as HIGH or CRITICAL, RESQ AI can prepare an SOS alert containing relevant emergency information.
-
-The system is designed to support communication workflows such as:
+For high-severity emergencies, the system can prepare structured SOS information containing:
 
 Emergency details
 
@@ -152,25 +113,66 @@ User location
 
 Hospital information
 
-Structured alert payloads
+Emergency report data
 
-Dispatcher notifications
+External communication services can be integrated for actual notification workflows.
 
-Integrations such as Twilio/WhatsApp can be used for alert delivery or simulation depending on the deployment configuration.
+Real-Time Dispatcher Dashboard
 
-📡 Real-Time Dispatcher Dashboard
+The system includes a separate dispatcher-facing dashboard for monitoring emergency incidents in real time.
 
-RESQ AI includes a dispatcher-facing interface for monitoring emergency incidents.
+The dashboard can display:
 
-Using Server-Sent Events (SSE), emergency information can be streamed to the dispatcher dashboard in real time.
+Active emergencies
 
-This enables operators to see incoming incidents without repeatedly refreshing the page.
+Emergency severity
 
-🤖 Agentic Architecture
+Emergency category
 
-The backend uses LangGraph to organize the emergency-response workflow into specialized components.
+Location
 
-Agent / Workflow Components
+Nearby hospitals
+
+Emergency details
+
+Real-time updates
+
+Dashboard Access Control
+
+The Dispatcher Dashboard is intended only for authorized users.
+
+Access should be restricted to:
+
+Hospital personnel
+
+Authorized administrators
+
+Authorized emergency-response personnel
+
+Regular emergency reporters/users should not have access to the dispatcher dashboard.
+
+Agentic Architecture
+
+RESQ AI uses LangGraph to coordinate specialized components.
+
+User
+ |
+ v
+Analysis Agent
+ |
+ +----> First Aid Agent
+ |
+ +----> Hospital Search Tool
+ |
+ +----> Report Agent
+ |
+ +----> Alert Preparation
+ |
+ v
+Dispatcher Stream
+ |
+ v
+Authorized Dashboard
 
 Component
 
@@ -178,37 +180,37 @@ Responsibility
 
 Analysis Agent
 
-Analyzes emergency information and determines severity/type
+Emergency analysis and severity assessment
 
 First Aid Agent
 
-Generates immediate first-aid guidance
+Immediate first-aid guidance
 
-Hospital Search Tool
+Hospital Search
 
-Finds nearby medical facilities
+Nearby hospital discovery
 
 Report Agent
 
-Structures emergency information into a report
+Structured emergency report
 
 Alert Preparation
 
-Prepares SOS/dispatch information
+SOS/dispatch information
 
 Dispatcher Stream
 
-Delivers emergency updates to the monitoring dashboard
+Real-time emergency updates
 
-This modular architecture allows individual responsibilities to remain separated while participating in one coordinated emergency workflow.
-
-🏗️ Technology Stack
+Technology Stack
 
 Frontend
 
 Next.js
 
-React 19
+React
+
+TypeScript
 
 Tailwind CSS
 
@@ -224,475 +226,195 @@ FastAPI
 
 LangGraph
 
-Google Gemini 2.5 Flash
-
 SQLAlchemy
 
 Server-Sent Events (SSE)
 
+AI
+
+Google Gemini API
+
 External Services
 
-Google Maps Places API — nearby hospital discovery
+Google Maps Places API
 
-Twilio / WhatsApp — alert communication workflow
+Google Maps
 
-Google Gemini API — AI analysis and response generation
+Twilio / WhatsApp where configured
 
 Database
-
-The backend supports database configurations such as:
 
 SQLite
 
 PostgreSQL
 
-The database can be used for storing information such as:
-
-Emergency histories
-
-Alerts
-
-Reports
-
-Relevant datasets
-
-🔄 Emergency Response Workflow
-
-Step 1 — Report Emergency
-
-The user provides an emergency description and, where available, their location.
-
-Emergency description
-+
-GPS coordinates
-
-↓
-
-Step 2 — Dynamic Triage
-
-The system determines what additional information may be necessary and generates relevant questions.
-
-↓
-
-Step 3 — AI Analysis
-
-Gemini analyzes the collected information and determines:
-
-Emergency Type
-Severity
-Observations
-Considerations
-
-↓
-
-Step 4 — First-Aid Guidance
-
-The system generates immediate instructions appropriate to the detected emergency.
-
-↓
-
-Step 5 — Hospital Discovery
-
-The user's location is used to identify nearby hospitals.
-
-↓
-
-Step 6 — Alert Preparation
-
-For higher-severity emergencies, an SOS payload is prepared for dispatch/communication workflows.
-
-↓
-
-Step 7 — Dispatcher Notification
-
-The emergency information is streamed to the dispatcher dashboard through SSE.
-
-↓
-
-Step 8 — Human Response
-
-A dispatcher or appropriate emergency professional can use the available information to coordinate the next response.
-
-🖥️ Application Interfaces
-
-RESQ AI is designed around two primary experiences.
-
-🚑 Emergency Reporter
-
-The emergency reporter interface focuses on speed and clarity.
-
-It allows users to:
-
-Describe an emergency
-
-Answer AI-generated triage questions
-
-Share their location
-
-View emergency analysis
-
-Receive first-aid guidance
-
-Discover nearby hospitals
-
-Access navigation information
-
-Trigger/prepare emergency alerts where applicable
-
-🖥️ Dispatcher Dashboard
-
-The dispatcher interface provides real-time awareness of incoming emergencies.
-
-It can display information such as:
-
-Active emergency alerts
-
-Emergency severity
-
-Emergency category
-
-Location
-
-Nearby hospitals
-
-Emergency details
-
-Real-time incoming updates
-
-📊 Severity-Based Response
-
-RESQ AI uses severity classification to determine how urgently an incident should be handled.
-
-LOW
- │
- ├── Information / guidance
- │
- ▼
-MEDIUM
- │
- ├── Guidance + relevant resources
- │
- ▼
-HIGH
- │
- ├── Immediate guidance
- ├── Hospital information
- └── SOS preparation
- │
- ▼
-CRITICAL
- │
- ├── Immediate guidance
- ├── Hospital information
- ├── SOS preparation
- └── Real-time dispatcher awareness
-
-🔐 Safety & Reliability
-
-RESQ AI is designed as an assistive emergency-response system.
-
-Important principles include:
-
-AI output should not be treated as a medical diagnosis.
-
-First-aid guidance should not replace professional medical care.
-
-Emergency services should be contacted when appropriate.
-
-Location data should only be used with appropriate user permission.
-
-External communication integrations should be securely configured.
-
-API keys and credentials should never be committed to source control.
-
-🔑 Environment Variables
-
-Create the required environment configuration files for your local setup.
+Application Architecture
+
+                    RESQ AI
+                       |
+          +------------+------------+
+          |                         |
+          v                         v
+   Emergency Reporter       Dispatcher Dashboard
+          |                         |
+          v                         ^
+     Next.js Frontend               |
+          |                         |
+          v                         |
+     FastAPI Backend                |
+          |                         |
+          v                         |
+       LangGraph -------------------+
+          |
+     +----+----+--------+--------+
+     |         |        |        |
+     v         v        v        v
+  Gemini    First Aid  Hospital  Report
+                       Search
+                          |
+                          v
+                  Google Places API
+
+Emergency Response Flow
+
+1. User reports an emergency
+2. AI performs dynamic triage
+3. Gemini analyzes the emergency
+4. First-aid guidance is generated
+5. User location is used to find nearby hospitals
+6. Emergency information is structured into a report
+7. SOS information is prepared for high-severity cases
+8. Authorized dispatchers can receive real-time updates
+9. Human responders use the information to coordinate assistance
+
+Security
+
+API keys are stored using environment variables.
+
+Secrets must never be committed to source control.
+
+Location data requires appropriate user permission.
+
+Dispatcher functionality should be protected through authentication and authorization.
+
+Emergency information should only be accessible to authorized personnel.
 
 Example:
 
 GEMINI_API_KEY=your_gemini_api_key
 GOOGLE_MAPS_API_KEY=your_google_maps_api_key
-
 DATABASE_URL=your_database_url
 
-TWILIO_ACCOUNT_SID=your_twilio_account_sid
-TWILIO_AUTH_TOKEN=your_twilio_auth_token
-TWILIO_PHONE_NUMBER=your_twilio_phone_number
+Local Development
 
-Do not commit .env files or secret API keys to GitHub.
-
-The exact variables depend on the integrations enabled in your deployment.
-
-🚀 Getting Started
-
-1. Clone the Repository
-
-git clone <your-repository-url>
-cd <your-project-directory>
-
-2. Backend Setup
-
-Move into the backend directory:
+Backend
 
 cd backend
-
-Create a virtual environment:
-
 python -m venv venv
 
-Activate it.
-
-Windows:
-
+# Windows
 venv\Scripts\activate
 
-macOS / Linux:
-
-source venv/bin/activate
-
-Install dependencies:
-
 pip install -r requirements.txt
-
-Configure the required environment variables.
-
-Start the FastAPI server:
-
 uvicorn main:app --reload
 
-3. Frontend Setup
-
-Move into the frontend directory:
+Frontend
 
 cd frontend
-
-Install dependencies:
-
 npm install
-
-Start the development server:
-
 npm run dev
 
-Open the local application in your browser.
+Open the local application using the development URL provided by Next.js.
 
-📁 High-Level Project Structure
-
-RESQ-AI/
-│
-├── backend/
-│   ├── agents/
-│   │   ├── analysis/
-│   │   ├── first_aid/
-│   │   ├── report/
-│   │   └── alert/
-│   │
-│   ├── tools/
-│   │   └── hospital_search/
-│   │
-│   ├── database/
-│   ├── models/
-│   ├── routes/
-│   ├── services/
-│   ├── main.py
-│   └── requirements.txt
-│
-├── frontend/
-│   ├── app/
-│   ├── components/
-│   ├── lib/
-│   ├── public/
-│   ├── package.json
-│   └── ...
-│
-├── .env.example
-├── .gitignore
-└── README.md
-
-The exact folder structure may vary depending on the current implementation.
-
-🔌 API / Communication Flow
-
-A simplified communication flow looks like this:
-
-Frontend
-   │
-   │ Emergency Request
-   ▼
-FastAPI Backend
-   │
-   ▼
-LangGraph Workflow
-   │
-   ├── Gemini AI
-   │
-   ├── First Aid
-   │
-   ├── Hospital Search
-   │
-   ├── Report Generation
-   │
-   └── Alert Preparation
-   │
-   ▼
-Database / External Services
-   │
-   ▼
-SSE
-   │
-   ▼
-Dispatcher Dashboard
-
-🎯 Project Goals
+Project Goals
 
 RESQ AI aims to:
 
-Reduce emergency response delays.
+Reduce delays in emergency information processing.
 
-Make emergency triage faster and more structured.
-
-Provide immediate first-aid assistance.
+Provide immediate AI-assisted first-aid guidance.
 
 Simplify nearby hospital discovery.
 
-Automate preparation of high-priority alerts.
+Automate preparation of emergency information.
 
 Improve dispatcher situational awareness.
 
-Demonstrate practical use of agentic AI in emergency response.
+Demonstrate practical applications of Agentic AI.
 
-💡 What Makes RESQ AI Different?
+What Makes RESQ AI Different?
 
-Traditional emergency workflows often require multiple independent actions:
+Traditional emergency workflows may require multiple independent actions:
 
-Describe emergency
-      ↓
-Figure out severity
-      ↓
-Search for first aid
-      ↓
-Search for hospital
-      ↓
-Find location
-      ↓
-Contact someone
-      ↓
-Inform dispatcher
+Describe Emergency
+       |
+Determine Severity
+       |
+Find First Aid
+       |
+Find Hospital
+       |
+Share Location
+       |
+Prepare Emergency Information
+       |
+Contact Responders
 
-RESQ AI attempts to coordinate these steps through one intelligent workflow:
+RESQ AI coordinates these tasks through a single intelligent workflow:
 
-                 ┌───────────────┐
-                 │ Emergency     │
-                 │ Report        │
-                 └───────┬───────┘
-                         │
-                         ▼
-                ┌─────────────────┐
-                │ AI Triage       │
-                └────────┬────────┘
-                         │
-          ┌──────────────┼──────────────┐
-          ▼              ▼              ▼
-     First Aid      Hospital Search   Alert
-          │              │              │
-          └──────────────┼──────────────┘
-                         ▼
-                Dispatcher Dashboard
+                Emergency
+                    |
+                    v
+              AI Triage
+                    |
+        +-----------+-----------+
+        |           |           |
+        v           v           v
+    First Aid   Hospital     Alert
+                Search      Preparation
+        |           |           |
+        +-----------+-----------+
+                    |
+                    v
+          Dispatcher Dashboard
+                    |
+                    v
+              Human Response
 
 The focus is not simply on generating an AI response, but on coordinating multiple emergency-response actions around the user's situation.
 
-🧪 Development & Testing
+Safety Disclaimer
 
-During development, the application should be tested locally before production deployment.
+RESQ AI is an experimental and assistive emergency-response system.
 
-Recommended testing areas include:
+It is not a substitute for:
 
-Emergency submission
+Doctors
 
-AI analysis
+Paramedics
 
-Dynamic triage
+Ambulances
 
-First-aid generation
+Hospitals
 
-GPS permission handling
+Emergency services
 
-Hospital discovery
+AI-generated information may be incomplete or incorrect.
 
-Distance calculation
+For a real emergency, contact the appropriate emergency services immediately.
 
-SOS payload generation
-
-SSE connection
-
-Dispatcher updates
-
-Database operations
-
-API error handling
-
-Missing/invalid environment variables
-
-🔮 Future Improvements
-
-Potential future development areas include:
-
-Dedicated emergency-service integrations
-
-More advanced hospital capability matching
-
-Ambulance availability integration
-
-Multilingual emergency assistance
-
-Voice-based emergency reporting
-
-Improved offline/low-connectivity support
-
-More robust authentication and authorization
-
-Advanced dispatcher prioritization
-
-Emergency analytics and reporting
-
-Improved audit logging
-
-Production-grade notification infrastructure
-
-🌍 Potential Impact
-
-Emergency response is highly time-sensitive.
-
-By combining:
-
-AI + Location + First Aid + Hospital Discovery + Automated Alerts + Real-Time Dispatch
-
-RESQ AI aims to create a more connected emergency-response experience where useful information can be generated and shared within seconds rather than requiring users or responders to perform every step manually.
-
-⚠️ Disclaimer
-
-RESQ AI is an experimental/assistive technology project.
-
-It is not a substitute for emergency medical services, doctors, paramedics, or other qualified professionals. AI-generated information may be incomplete or incorrect.
-
-In a real emergency, contact the appropriate local emergency services and follow instructions from qualified professionals.
-
-👨‍💻 Project
+Project
 
 Project: RESQ AI
 Category: AI / Healthcare Technology / Emergency Response
 Architecture: Full-Stack + Agentic AI
 Frontend: Next.js + React
 Backend: FastAPI + Python
-AI: Google Gemini 2.5 Flash
+AI: Google Gemini
 Agent Framework: LangGraph
 Maps: Google Maps Places API
-Database: SQLAlchemy + SQLite/PostgreSQL
-Real-Time: Server-Sent Events (SSE)
+Real-Time Communication: Server-Sent Events (SSE)
 
-⭐ Vision
+Vision
 
-RESQ AI — From emergency description to coordinated response.
-
-The long-term vision is to build an intelligent emergency-response layer that can understand a situation, gather critical information, provide immediate assistance, identify nearby resources, and keep human responders informed in real time.
+RESQ AI aims to create an intelligent emergency-response layer that can understand an emergency, gather critical information, provide immediate assistance, identify nearby medical resources, and keep authorized human responders informed in real time.
