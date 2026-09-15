@@ -36,33 +36,10 @@ RESQ AI brings these tasks together through an AI-driven workflow.
 
 ## Core Workflow
 
-Emergency Report
-       |
-       v
-Dynamic Triage
-       |
-       v
-AI Emergency Analysis
-       |
-       +------> Emergency Type
-       +------> Severity
-       +------> Key Observations
-       |
-       v
-First-Aid Guidance
-       |
-       v
-Nearby Hospital Discovery
-       |
-       v
-SOS / Alert Preparation
-       |
-       v
-Dispatcher Dashboard
-       |
-       v
-Human Response
 
+**Emergency Report → Dynamic Triage → AI Emergency Analysis → Emergency Type → Severity → Key Observations → First-Aid → Nearby Hospital → SOS/Alert → Dispatcher → Human Response**
+
+This is much more professional for a GitHub README and should render properly instead of becoming one long line.
 
 ## Key Features
 
