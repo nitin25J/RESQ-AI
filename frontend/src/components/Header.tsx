@@ -5,6 +5,8 @@ import { ShieldAlert, Activity, AlertTriangle, Moon, Sun, BookOpen } from "lucid
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { isAuthenticated, clearToken } from "@/lib/auth";
+import { useRouter } from "next/navigation";
 
 interface HeaderProps {
   isBackendHealthy: boolean;
@@ -13,11 +15,19 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ isBackendHealthy }) => {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [isAuth, setIsAuth] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const timer = setTimeout(() => setMounted(true), 0);
+    setIsAuth(isAuthenticated());
     return () => clearTimeout(timer);
   }, []);
+
+  const handleLogout = () => {
+    clearToken();
+    router.push("/dashboard/login");
+  };
 
   return (
     <header className="w-full bg-white/60 dark:bg-slate-950/60 backdrop-blur-xl sticky top-0 z-40 border-b border-white dark:border-slate-800 shadow-sm transition-colors duration-500">
@@ -65,6 +75,15 @@ export const Header: React.FC<HeaderProps> = ({ isBackendHealthy }) => {
               title="Toggle Theme"
             >
               {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
+          )}
+
+          {mounted && isAuth && (
+            <button
+              onClick={handleLogout}
+              className="px-4 py-1.5 rounded-full bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 font-bold hover:bg-rose-200 dark:hover:bg-rose-900/50 transition-colors"
+            >
+              Logout
             </button>
           )}
         </div>

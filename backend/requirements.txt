@@ -11,3 +11,5 @@ sqlalchemy>=2.0.29
 asyncpg>=0.29.0
 aiosqlite>=0.20.0
 greenlet>=3.0.3
+PyJWT>=2.8.0
+passlib[bcrypt]>=1.7.4

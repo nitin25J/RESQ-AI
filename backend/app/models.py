@@ -91,3 +91,24 @@ class AlertDispatchResponse(BaseModel):
     success: bool = Field(default=True)
     message: str = Field(..., description="Status message")
     dispatch_id: Optional[str] = Field(default=None, description="Mock tracking ID for the dispatched alert")
+
+# --- Admin API Models ---
+
+class EmergencyStatusUpdateRequest(BaseModel):
+    status: str = Field(..., description="New status: ACTIVE, IN_PROGRESS, or RESOLVED")
+
+class AdminEmergencyResponse(BaseModel):
+    id: int
+    emergency_id: str
+    description: str
+    latitude: Optional[float]
+    longitude: Optional[float]
+    severity: str
+    emergency_type: str
+    status: str
+    created_at: str
+    resolved_at: Optional[str]
+
+    class Config:
+        orm_mode = True
+        from_attributes = True

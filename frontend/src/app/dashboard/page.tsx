@@ -1,10 +1,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Activity, ShieldAlert, MapPin, Radio, AlertTriangle, X, Navigation } from "lucide-react";
+import { Activity, ShieldAlert, MapPin, Radio, AlertTriangle, X, Navigation, CheckCircle2, Trash2, Clock } from "lucide-react";
 import { Header } from "@/components/Header";
 import { checkBackendHealth } from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
+import { isAuthenticated, getToken } from "@/lib/auth";
+import { useRouter } from "next/navigation";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://resq-ai-ls67.onrender.com";
 
@@ -12,6 +14,7 @@ interface DispatchAlert {
   dispatch_id: string;
   emergency_type: string;
   severity: string;
+  status: string;
   text: string;
   timestamp: string;
 }
@@ -21,13 +24,48 @@ export default function Dashboard() {
   const [isBackendHealthy, setIsBackendHealthy] = useState(true);
   const [isConnected, setIsConnected] = useState(false);
   const [selectedAlert, setSelectedAlert] = useState<DispatchAlert | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
+    if (!isAuthenticated()) {
+      router.push("/dashboard/login");
+      return;
+    }
+    
+    const token = getToken();
+
+    async function loadHistoricalEmergencies() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/admin/emergencies`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          // Map backend admin schema to DispatchAlert
+          const mappedAlerts = data.map((e: any) => ({
+            dispatch_id: e.emergency_id,
+            emergency_type: e.emergency_type || "Emergency",
+            severity: e.severity || "UNKNOWN",
+            status: e.status || "ACTIVE",
+            text: e.description,
+            timestamp: new Date(e.created_at).toLocaleTimeString(),
+          }));
+          setAlerts(mappedAlerts);
+        }
+      } catch (e) {
+        console.error("Failed to load historical emergencies", e);
+      }
+    }
+
     async function verifyHealth() {
       const health = await checkBackendHealth();
       setIsBackendHealthy(health.healthy);
     }
+    
     verifyHealth();
+    loadHistoricalEmergencies();
 
     // Connect to Server-Sent Events (SSE) Stream
     const eventSource = new EventSource(`${API_BASE_URL}/api/dispatch-stream`);
@@ -39,8 +77,22 @@ export default function Dashboard() {
     eventSource.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
+
+        if (data.event_type === "STATUS_UPDATE") {
+          setAlerts(prev => prev.map(a => a.dispatch_id === data.emergency_id ? { ...a, status: data.status } : a));
+          setSelectedAlert(prev => prev && prev.dispatch_id === data.emergency_id ? { ...prev, status: data.status } : prev);
+          return;
+        }
+
+        if (data.event_type === "DELETED") {
+          setAlerts(prev => prev.filter(a => a.dispatch_id !== data.emergency_id));
+          setSelectedAlert(prev => prev && prev.dispatch_id === data.emergency_id ? null : prev);
+          return;
+        }
+
         const newAlert: DispatchAlert = {
           ...data,
+          status: data.status || "ACTIVE",
           timestamp: new Date().toLocaleTimeString(),
         };
         
@@ -63,6 +115,45 @@ export default function Dashboard() {
       eventSource.close();
     };
   }, []);
+
+  const handleStatusUpdate = async (id: string, newStatus: string) => {
+    try {
+      const token = getToken();
+      const res = await fetch(`${API_BASE_URL}/api/admin/emergencies/${id}/status`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+      // The SSE handler updates UI automatically for us locally, but we can also eagerly update:
+      if (res.ok) {
+        setAlerts(prev => prev.map(a => a.dispatch_id === id ? { ...a, status: newStatus } : a));
+        setSelectedAlert(prev => prev && prev.dispatch_id === id ? { ...prev, status: newStatus } : prev);
+      }
+    } catch (e) {
+      console.error("Failed to update status", e);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      const token = getToken();
+      const res = await fetch(`${API_BASE_URL}/api/admin/emergencies/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      if (res.ok) {
+        setAlerts(prev => prev.filter(a => a.dispatch_id !== id));
+        setSelectedAlert(null);
+      }
+    } catch (e) {
+      console.error("Failed to delete", e);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 font-sans flex flex-col relative overflow-hidden transition-colors duration-500">
@@ -134,11 +225,20 @@ export default function Dashboard() {
                       {idx === 0 && <div className="absolute top-0 left-0 w-1 h-full bg-rose-500 animate-pulse"></div>}
                       
                       <div className="flex justify-between items-start mb-2">
-                        <span className={`text-[10px] font-black px-2.5 py-1 rounded-md uppercase tracking-widest transition-colors ${
-                          alert.severity === "CRITICAL" ? "bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-900/50" : "bg-orange-100 dark:bg-orange-950/80 text-orange-700 dark:text-orange-400 border border-orange-200 dark:border-orange-900/50"
-                        }`}>
-                          {alert.severity}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className={`text-[10px] font-black px-2.5 py-1 rounded-md uppercase tracking-widest transition-colors ${
+                            alert.severity === "CRITICAL" ? "bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-900/50" : "bg-orange-100 dark:bg-orange-950/80 text-orange-700 dark:text-orange-400 border border-orange-200 dark:border-orange-900/50"
+                          }`}>
+                            {alert.severity}
+                          </span>
+                          <span className={`text-[10px] font-black px-2.5 py-1 rounded-md uppercase tracking-widest transition-colors ${
+                            alert.status === "ACTIVE" ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-900/50" :
+                            alert.status === "IN_PROGRESS" ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-900/50" :
+                            "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/50"
+                          }`}>
+                            {alert.status.replace("_", " ")}
+                          </span>
+                        </div>
                         <span className="text-[10px] font-mono font-bold text-slate-400 dark:text-slate-500 transition-colors">{alert.timestamp}</span>
                       </div>
                       
@@ -314,6 +414,37 @@ export default function Dashboard() {
                   </div>
 
                 </div>
+              </div>
+              
+              {/* Action Buttons */}
+              <div className="p-6 border-t border-slate-100 dark:border-slate-800/50 bg-slate-50/50 dark:bg-slate-900/50 flex flex-wrap gap-3">
+                {selectedAlert.status === "ACTIVE" && (
+                  <button 
+                    onClick={() => handleStatusUpdate(selectedAlert.dispatch_id, "IN_PROGRESS")}
+                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-bold transition-colors"
+                  >
+                    <Clock className="w-4 h-4" />
+                    Acknowledge
+                  </button>
+                )}
+                {(selectedAlert.status === "ACTIVE" || selectedAlert.status === "IN_PROGRESS") && (
+                  <button 
+                    onClick={() => handleStatusUpdate(selectedAlert.dispatch_id, "RESOLVED")}
+                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-bold transition-colors"
+                  >
+                    <CheckCircle2 className="w-4 h-4" />
+                    Mark Resolved
+                  </button>
+                )}
+                {selectedAlert.status === "RESOLVED" && (
+                  <button 
+                    onClick={() => handleDelete(selectedAlert.dispatch_id)}
+                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-rose-600 hover:bg-rose-700 text-white px-6 py-2.5 rounded-xl font-bold transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Delete Case
+                  </button>
+                )}
               </div>
             </motion.div>
           </div>

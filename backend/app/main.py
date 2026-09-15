@@ -12,6 +12,7 @@ from app.models import HealthResponse, EmergencyRequest, EmergencyResponse, Aler
 from app.agents.graph import emergency_graph
 from app.database import engine, Base, get_db
 from app.db_models import EmergencyHistory, AlertHistory, DiseaseDataset
+from datetime import timedelta
 
 import sys
 import os
@@ -80,8 +81,13 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         }
     )
 
+from fastapi import HTTPException
+
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
+    if isinstance(exc, HTTPException):
+        return JSONResponse(status_code=exc.status_code, content={"success": False, "error": exc.detail})
+        
     logger.error(f"Unhandled exception on {request.url.path}: {str(exc)}", exc_info=True)
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -173,11 +179,18 @@ async def analyze_emergency(payload: EmergencyRequest, db: AsyncSession = Depend
         report_data = final_state.get("report")
         
         db_history = EmergencyHistory(
+            emergency_id=f"CASE-{uuid.uuid4().hex[:8].upper()}",
             description=payload.description,
             emergency_type=analysis_data.emergency_type if analysis_data else None,
             severity=analysis_data.severity if analysis_data else None,
             latitude=payload.latitude,
             longitude=payload.longitude,
+            location=final_state.get("alert").location if final_state.get("alert") else None,
+            key_observations=analysis_data.observations if analysis_data else None,
+            nearby_hospitals=[h.model_dump() for h in final_state.get("hospitals", [])] if final_state.get("hospitals") else None,
+            first_aid_guidance=first_aid_data.model_dump() if first_aid_data else None,
+            incident_report=report_data.model_dump() if report_data else None,
+            alert_information=final_state.get("alert").model_dump() if final_state.get("alert") else None,
             analysis_data=analysis_data.model_dump() if analysis_data else None,
             first_aid_data=first_aid_data.model_dump() if first_aid_data else None,
             report_data=report_data.model_dump() if report_data else None
@@ -202,6 +215,135 @@ async def analyze_emergency(payload: EmergencyRequest, db: AsyncSession = Depend
             hospital_search_status="Analysis service encountered an error.",
             error=f"Emergency analysis pipeline error: {str(e)}"
         )
+
+# --- Authentication API ---
+
+from pydantic import BaseModel
+from app.auth import verify_password, create_access_token, get_current_user
+from app.db_models import User
+from sqlalchemy import select
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+class LoginResponse(BaseModel):
+    success: bool
+    access_token: str
+    token_type: str
+    role: str
+
+@app.post("/api/admin/login", response_model=LoginResponse, tags=["Authentication"])
+async def login(payload: LoginRequest, db: AsyncSession = Depends(get_db)):
+    """
+    Authenticates a user and returns a JWT token.
+    """
+    result = await db.execute(select(User).where(User.username == payload.username))
+    user = result.scalars().first()
+    
+    if not user or not verify_password(payload.password, user.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid credentials.",
+        )
+        
+    # Create JWT
+    access_token = create_access_token(data={"sub": user.username, "role": user.role}, expires_delta=timedelta(hours=8))
+    
+    return LoginResponse(
+        success=True,
+        access_token=access_token,
+        token_type="bearer",
+        role=user.role
+    )
+
+@app.post("/api/admin/logout", tags=["Authentication"])
+async def logout():
+    """
+    Since we use client-side JWTs, the server just returns success.
+    The client is responsible for deleting the token from localStorage.
+    """
+    return {"success": True, "message": "Successfully logged out. Please clear client-side token."}
+
+from app.auth import require_admin
+from app.models import EmergencyStatusUpdateRequest, AdminEmergencyResponse
+from datetime import datetime
+
+@app.get("/api/admin/emergencies", tags=["Admin"])
+async def get_all_emergencies(user: User = Depends(require_admin), db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(EmergencyHistory).order_by(EmergencyHistory.created_at.desc()))
+    emergencies = result.scalars().all()
+    # Pydantic will auto-convert these due to from_attributes=True
+    return [
+        {
+            "id": e.id,
+            "emergency_id": e.emergency_id,
+            "description": e.description,
+            "latitude": e.latitude,
+            "longitude": e.longitude,
+            "severity": e.severity,
+            "emergency_type": e.emergency_type,
+            "status": e.status,
+            "created_at": str(e.created_at),
+            "resolved_at": str(e.resolved_at) if e.resolved_at else None
+        } for e in emergencies
+    ]
+
+@app.get("/api/admin/emergencies/{emergency_id}", tags=["Admin"])
+async def get_emergency(emergency_id: str, user: User = Depends(require_admin), db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(EmergencyHistory).where(EmergencyHistory.emergency_id == emergency_id))
+    emergency = result.scalars().first()
+    if not emergency:
+        raise HTTPException(status_code=404, detail="Emergency not found")
+    return emergency
+
+@app.patch("/api/admin/emergencies/{emergency_id}/status", tags=["Admin"])
+async def update_emergency_status(emergency_id: str, payload: EmergencyStatusUpdateRequest, user: User = Depends(require_admin), db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(EmergencyHistory).where(EmergencyHistory.emergency_id == emergency_id))
+    emergency = result.scalars().first()
+    if not emergency:
+        raise HTTPException(status_code=404, detail="Emergency not found")
+        
+    emergency.status = payload.status
+    if payload.status == "RESOLVED":
+        emergency.resolved_at = datetime.utcnow()
+        
+    await db.commit()
+    
+    # Broadcast status update via SSE
+    event_data = {
+        "event_type": "STATUS_UPDATE",
+        "emergency_id": emergency.emergency_id,
+        "status": emergency.status
+    }
+    for queue in active_dispatch_queues:
+        await queue.put(event_data)
+        
+    return {"success": True}
+
+@app.delete("/api/admin/emergencies/{emergency_id}", tags=["Admin"])
+async def delete_emergency(emergency_id: str, user: User = Depends(require_admin), db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(EmergencyHistory).where(EmergencyHistory.emergency_id == emergency_id))
+    emergency = result.scalars().first()
+    if not emergency:
+        raise HTTPException(status_code=404, detail="Emergency not found")
+        
+    if emergency.status != "RESOLVED":
+        raise HTTPException(status_code=400, detail="Cannot delete an emergency that is not RESOLVED")
+        
+    await db.delete(emergency)
+    await db.commit()
+    
+    # Broadcast deletion via SSE
+    event_data = {
+        "event_type": "DELETED",
+        "emergency_id": emergency_id
+    }
+    for queue in active_dispatch_queues:
+        await queue.put(event_data)
+        
+    return {"success": True}
+
 
 import asyncio
 import uuid
