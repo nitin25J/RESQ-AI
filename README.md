@@ -132,38 +132,6 @@ Access should be restricted to:
 Regular emergency reporters/users should not have access to the dispatcher dashboard.
 
 
-## Agentic Architecture
-
-RESQ AI uses LangGraph to coordinate specialized components.
-
-User
- |
- v
-Analysis Agent
- |
- +----> First Aid Agent
- |
- +----> Hospital Search Tool
- |
- +----> Report Agent
- |
- +----> Alert Preparation
- |
- v
-Dispatcher Stream
- |
- v
-Authorized Dashboard
-
-
-| Component | Responsibility |
-|---|---|
-| Analysis Agent | Emergency analysis and severity assessment |
-| First Aid Agent | Immediate first-aid guidance |
-| Hospital Search | Nearby hospital discovery |
-| Report Agent | Structured emergency report |
-| Alert Preparation | SOS/dispatch information |
-| Dispatcher Stream | Real-time emergency updates |
 
 
 ## Technology Stack
