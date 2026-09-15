@@ -250,39 +250,6 @@ Authorized Dashboard
 - Dispatcher functionality should be protected through authentication and authorization.
 - Emergency information should only be accessible to authorized personnel.
 
-Example:
-
-GEMINI_API_KEY=your_gemini_api_key
-GOOGLE_MAPS_API_KEY=your_google_maps_api_key
-DATABASE_URL=your_database_url
-
-
-## Local Development
-
-### Backend
-
-cd backend
-
-python -m venv venv
-
-Windows:
-venv\Scripts\activate
-
-pip install -r requirements.txt
-
-uvicorn main:app --reload
-
-
-### Frontend
-
-cd frontend
-
-npm install
-
-npm run dev
-
-Open the local application using the development URL provided by Next.js.
-
 
 ## Project Goals
 
