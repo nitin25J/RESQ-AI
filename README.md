@@ -4,7 +4,7 @@
 
 RESQ AI is a full-stack Agentic AI emergency response platform designed to assist users during emergency situations.
 
-It combines AI emergency triage, first-aid guidance, real-time GPS, nearby hospital discovery, SOS preparation, incident reporting, and real-time dispatcher monitoring into a single workflow.
+It combines AI emergency triage, first-aid guidance, real-time GPS, nearby hospital discovery, SOS preparation, incident reporting, and real-time dispatcher monitoring into a single workflow
 
 > RESQ AI is designed to assist during emergencies and does not replace professional medical services.
 
