@@ -775,9 +775,21 @@ async def seed():
         for data in COMMON_EMERGENCIES:
             new_disease = DiseaseDataset(**data)
             session.add(new_disease)
+            
+        # Seed default admin user
+        from app.db_models import User
+        from app.auth import get_password_hash
+        
+        result = await session.execute(select(User).where(User.username == "admin"))
+        admin = result.scalars().first()
+        if not admin:
+            hashed_pwd = get_password_hash("admin123")
+            new_admin = User(username="admin", password_hash=hashed_pwd, role="ADMIN")
+            session.add(new_admin)
+            logger.info("Created default admin user (admin/admin123)")
         
         await session.commit()
-        logger.info(f"Successfully seeded {len(COMMON_EMERGENCIES)} categorized diseases into the database.")
+        logger.info(f"Successfully seeded {len(COMMON_EMERGENCIES)} categorized diseases and admin user into the database.")
 
 if __name__ == "__main__":
     asyncio.run(seed())
