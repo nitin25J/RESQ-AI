@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from sqlalchemy import text
+from sqlalchemy import text, select
 from app.database import engine, Base, AsyncSessionLocal
 from app.db_models import DiseaseDataset
 
