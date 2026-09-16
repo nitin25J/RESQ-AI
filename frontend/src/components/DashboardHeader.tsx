@@ -39,7 +39,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ isBackendHealt
             </div>
             <div>
               <div className="flex items-center gap-2.5">
-                <h1 className="text-xl font-black tracking-tight text-slate-900 dark:text-white transition-colors">Command Center</h1>
+                <h1 className="text-xl font-black tracking-tight text-slate-900 dark:text-white transition-colors">Administrative Dashboard</h1>
                 <span className="text-[10px] px-2.5 py-0.5 rounded-full font-bold font-mono bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700 shadow-sm uppercase tracking-wider transition-colors">
                   Admin
                 </span>
