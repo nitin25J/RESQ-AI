@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Header } from "@/components/Header";
+import { PublicHeader } from "@/components/PublicHeader";
 import { checkBackendHealth, fetchCommonDiseases, Disease } from "@/lib/api";
 import { BookOpen, Search, X, Activity, ChevronRight, Stethoscope } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -36,10 +36,10 @@ export default function LibraryPage() {
   });
 
   return (
-    <div className="min-h-screen flex flex-col font-sans bg-slate-50 dark:bg-slate-950 transition-colors">
-      <Header isBackendHealthy={isBackendHealthy} />
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans transition-colors duration-500">
+      <PublicHeader />
 
-      <main className="flex-1 w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 relative z-10">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-12 relative z-10">
         <div className="max-w-6xl mx-auto space-y-12">
           
           {/* Header Section */}

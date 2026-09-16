@@ -1,33 +1,19 @@
 "use client";
 
 import React from "react";
-import { ShieldAlert, Activity, AlertTriangle, Moon, Sun, BookOpen } from "lucide-react";
+import { ShieldAlert, AlertTriangle, Moon, Sun, BookOpen } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { isAuthenticated, clearToken } from "@/lib/auth";
-import { useRouter } from "next/navigation";
 
-interface HeaderProps {
-  isBackendHealthy: boolean;
-}
-
-export const Header: React.FC<HeaderProps> = ({ isBackendHealthy }) => {
+export const PublicHeader: React.FC = () => {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const [isAuth, setIsAuth] = useState(false);
-  const router = useRouter();
 
   useEffect(() => {
     const timer = setTimeout(() => setMounted(true), 0);
-    setIsAuth(isAuthenticated());
     return () => clearTimeout(timer);
   }, []);
-
-  const handleLogout = () => {
-    clearToken();
-    router.push("/dashboard/login");
-  };
 
   return (
     <header className="w-full bg-white/60 dark:bg-slate-950/60 backdrop-blur-xl sticky top-0 z-40 border-b border-white dark:border-slate-800 shadow-sm transition-colors duration-500">
@@ -59,15 +45,8 @@ export const Header: React.FC<HeaderProps> = ({ isBackendHealthy }) => {
           </nav>
         </div>
 
-        {/* Status & Theme Toggle */}
+        {/* Theme Toggle */}
         <div className="flex items-center gap-3 text-xs">
-          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 shadow-sm transition-colors">
-            <Activity className={`w-3.5 h-3.5 ${isBackendHealthy ? "text-emerald-500" : "text-amber-500"}`} />
-            <span className="text-slate-700 dark:text-slate-300 font-bold">
-              Backend: {isBackendHealthy ? "Online" : "Connecting..."}
-            </span>
-          </div>
-
           {mounted && (
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
@@ -75,15 +54,6 @@ export const Header: React.FC<HeaderProps> = ({ isBackendHealthy }) => {
               title="Toggle Theme"
             >
               {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-            </button>
-          )}
-
-          {mounted && isAuth && (
-            <button
-              onClick={handleLogout}
-              className="px-4 py-1.5 rounded-full bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 font-bold hover:bg-rose-200 dark:hover:bg-rose-900/50 transition-colors"
-            >
-              Logout
             </button>
           )}
         </div>

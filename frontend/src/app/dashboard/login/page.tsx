@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { setToken } from "@/lib/auth";
+import { DashboardHeader } from "@/components/DashboardHeader";
 import { ShieldAlert, Loader2, KeyRound, User as UserIcon } from "lucide-react";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://resq-ai-ls67.onrender.com";
@@ -47,12 +48,15 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center relative overflow-hidden font-sans">
-      {/* Background Gradients */}
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans transition-colors duration-500 flex flex-col relative overflow-hidden">
+      
+      <DashboardHeader isBackendHealthy={true} />
+
+      {/* Ambient Background Gradients */}
       <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-red-600/20 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2" />
       <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-rose-600/10 rounded-full blur-[150px] translate-x-1/3 translate-y-1/3" />
 
-      <div className="relative z-10 w-full max-w-md p-8 backdrop-blur-xl bg-neutral-900/50 border border-neutral-800 rounded-2xl shadow-2xl">
+      <div className="relative z-10 w-full max-w-md mx-auto my-auto p-8 backdrop-blur-xl bg-neutral-900/50 border border-neutral-800 rounded-2xl shadow-2xl">
         <div className="flex flex-col items-center mb-8">
           <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mb-4 border border-red-500/30">
             <ShieldAlert className="w-8 h-8 text-red-500" />

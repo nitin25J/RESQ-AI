@@ -198,6 +198,17 @@ async def analyze_emergency(payload: EmergencyRequest, db: AsyncSession = Depend
         db.add(db_history)
         await db.commit()
 
+        # Broadcast new emergency to live dashboard via SSE
+        new_event = {
+            "dispatch_id": db_history.emergency_id,
+            "emergency_type": analysis_data.emergency_type if analysis_data else "Emergency",
+            "severity": analysis_data.severity if analysis_data else "UNKNOWN",
+            "status": "ACTIVE",
+            "text": final_state.get("alert").formatted_text if final_state.get("alert") else payload.description
+        }
+        for queue in active_dispatch_queues:
+            await queue.put(new_event)
+
         return EmergencyResponse(
             success=True,
             analysis=analysis_data,
@@ -285,7 +296,8 @@ async def get_all_emergencies(user: User = Depends(require_admin), db: AsyncSess
             "emergency_type": e.emergency_type,
             "status": e.status,
             "created_at": str(e.created_at),
-            "resolved_at": str(e.resolved_at) if e.resolved_at else None
+            "resolved_at": str(e.resolved_at) if e.resolved_at else None,
+            "alert_information": e.alert_information
         } for e in emergencies
     ]
 

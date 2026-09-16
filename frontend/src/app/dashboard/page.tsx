@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Activity, ShieldAlert, MapPin, Radio, AlertTriangle, X, Navigation, CheckCircle2, Trash2, Clock } from "lucide-react";
-import { Header } from "@/components/Header";
+import { DashboardHeader } from "@/components/DashboardHeader";
 import { checkBackendHealth } from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
 import { isAuthenticated, getToken } from "@/lib/auth";
@@ -49,7 +49,7 @@ export default function Dashboard() {
             emergency_type: e.emergency_type || "Emergency",
             severity: e.severity || "UNKNOWN",
             status: e.status || "ACTIVE",
-            text: e.description,
+            text: e.alert_information?.formatted_text || e.description,
             timestamp: new Date(e.created_at).toLocaleTimeString(),
           }));
           setAlerts(mappedAlerts);
@@ -163,7 +163,7 @@ export default function Dashboard() {
         <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-rose-500/10 dark:bg-rose-500/20 blur-[100px]"></div>
       </div>
 
-      <Header isBackendHealthy={isBackendHealthy} />
+      <DashboardHeader isBackendHealthy={isBackendHealthy} />
 
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-8 relative z-10 flex flex-col h-[calc(100vh-80px)]">
         

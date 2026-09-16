@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Header } from "@/components/Header";
+import { PublicHeader } from "@/components/PublicHeader";
 import { EmergencyInput } from "@/components/EmergencyInput";
 import { DemoPresets } from "@/components/DemoPresets";
 import { SeverityBadge } from "@/components/SeverityBadge";
@@ -59,7 +59,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col font-sans relative">
-      <Header isBackendHealthy={isBackendHealthy} />
+      <PublicHeader />
 
       <main className="flex-1 w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 relative z-10">
         
