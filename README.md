@@ -158,3 +158,65 @@ flowchart LR
 - **SOS Preparation:** Structured incident details for potential alert workflows.
 - **Dispatcher Monitoring:** Incident visibility and configured real-time updates.
 - **Human Oversight:** Emergency information remains subject to professional judgment.
+
+
+
+## ⚙️ Emergency Processing Pipeline
+
+```mermaid
+flowchart TD
+    A(["Emergency Report"]) --> B["Capture Description"]
+    B --> C["Dynamic AI Triage"]
+    C --> D["Gemini Analysis"]
+    D --> E["Classify Emergency"]
+    E --> F["Determine Severity"]
+    F --> G["Extract Key Observations"]
+
+    G --> H{"Additional Information Required?"}
+
+    H -- Yes --> I["Ask Follow-up Questions"]
+    I --> C
+
+    H -- No --> J["Generate First-Aid Guidance"]
+    J --> K["Obtain GPS Location"]
+    K --> L["Discover Nearby Hospitals"]
+    L --> M["Structure Incident Report"]
+
+    M --> N{"High-Severity Emergency?"}
+
+    N -- Yes --> O["Prepare SOS Information"]
+    N -- No --> P["Retain Incident Details"]
+
+    O --> Q["Dispatcher Update"]
+    P --> Q
+
+    Q --> R["Real-Time Dashboard via SSE"]
+    R --> S["Authorized Human Review"]
+    S --> T(["Emergency Response Coordination"])
+
+    classDef input fill:#153A63,stroke:#60A5FA,color:#FFFFFF
+    classDef process fill:#102F50,stroke:#3B82F6,color:#FFFFFF
+    classDef decision fill:#173D65,stroke:#60A5FA,color:#FFFFFF
+    classDef output fill:#174D3A,stroke:#4ADE80,color:#FFFFFF
+
+    class A,B input
+    class C,D,E,F,G,I,J,K,L,M,O,P,Q,R process
+    class H,N decision
+    class S,T output
+```
+
+### Pipeline stages
+
+| Stage | Operation |
+|---|---|
+| 01 | Capture the emergency description |
+| 02 | Analyze the report using the AI workflow |
+| 03 | Determine category, severity, and observations |
+| 04 | Ask follow-up questions when needed |
+| 05 | Generate situation-specific first-aid guidance |
+| 06 | Use GPS to support nearby hospital discovery |
+| 07 | Prepare structured incident and SOS information |
+| 08 | Stream configured updates to the dispatcher dashboard |
+| 09 | Support human review and response coordination |
+
+**Important:** AI severity classification is advisory. The application must not delay emergency services while collecting additional information or processing an incident.
