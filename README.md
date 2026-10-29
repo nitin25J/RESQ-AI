@@ -123,3 +123,38 @@ flowchart TD
 | 09 | Support human review and response coordination |
 
 **Important:** AI severity classification is advisory. The application must not delay emergency services while collecting additional information or processing an incident.
+
+
+## 🚑 Core Capabilities
+
+```mermaid
+flowchart LR
+    A["RESQ AI"] --> B["AI Triage"]
+    A --> C["First Aid"]
+    A --> D["GPS & Hospitals"]
+    A --> E["SOS Preparation"]
+    A --> F["Dispatcher Monitoring"]
+
+    B --> G["Structured Emergency Information"]
+    C --> G
+    D --> G
+    E --> G
+    F --> H["Human Oversight"]
+
+    classDef main fill:#12365B,stroke:#60A5FA,color:#FFFFFF
+    classDef feature fill:#173D65,stroke:#60A5FA,color:#FFFFFF
+    classDef outcome fill:#174D3A,stroke:#4ADE80,color:#FFFFFF
+
+    class A main
+    class B,C,D,E,F feature
+    class G,H outcome
+```
+
+### Feature breakdown
+
+- **AI Triage:** Emergency classification, severity assessment, and relevant observations.
+- **First Aid:** Concise, situation-specific assistance.
+- **GPS & Hospitals:** Browser geolocation and nearby hospital discovery.
+- **SOS Preparation:** Structured incident details for potential alert workflows.
+- **Dispatcher Monitoring:** Incident visibility and configured real-time updates.
+- **Human Oversight:** Emergency information remains subject to professional judgment.
