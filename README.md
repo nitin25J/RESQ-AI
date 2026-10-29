@@ -220,3 +220,87 @@ flowchart TD
 | 09 | Support human review and response coordination |
 
 **Important:** AI severity classification is advisory. The application must not delay emergency services while collecting additional information or processing an incident.
+
+
+## 🚑 Core Capabilities
+
+```mermaid
+flowchart LR
+    A["RESQ AI"] --> B["AI Triage"]
+    A --> C["First Aid"]
+    A --> D["GPS & Hospitals"]
+    A --> E["SOS Preparation"]
+    A --> F["Dispatcher Monitoring"]
+
+    B --> G["Structured Emergency Information"]
+    C --> G
+    D --> G
+    E --> G
+    F --> H["Human Oversight"]
+
+    classDef main fill:#12365B,stroke:#60A5FA,color:#FFFFFF
+    classDef feature fill:#173D65,stroke:#60A5FA,color:#FFFFFF
+    classDef outcome fill:#174D3A,stroke:#4ADE80,color:#FFFFFF
+
+    class A main
+    class B,C,D,E,F feature
+    class G,H outcome
+```
+
+### Feature breakdown
+
+- **AI Triage:** Emergency classification, severity assessment, and relevant observations.
+- **First Aid:** Concise, situation-specific assistance.
+- **GPS & Hospitals:** Browser geolocation and nearby hospital discovery.
+- **SOS Preparation:** Structured incident details for potential alert workflows.
+- **Dispatcher Monitoring:** Incident visibility and configured real-time updates.
+- **Human Oversight:** Emergency information remains subject to professional judgment.
+
+
+## 🛠️ Technology Stack
+
+| Layer | Technologies |
+|---|---|
+| Frontend | Next.js, React, TypeScript |
+| UI | Tailwind CSS, Framer Motion |
+| Backend | Python, FastAPI |
+| Agent Orchestration | LangGraph |
+| Generative AI | Google Gemini API |
+| Database | SQLite / PostgreSQL |
+| ORM | SQLAlchemy |
+| Real-Time Communication | Server-Sent Events (SSE) |
+| Maps | Google Maps Places API |
+| Location | Browser Geolocation API |
+| Deployment | Vercel, Render |
+
+External communication integrations such as Twilio or WhatsApp should be listed as active integrations only when configured and verified.
+
+
+## 🔐 Security & Responsible AI
+
+- Keep API keys and secrets in environment variables.
+- Obtain user permission before accessing location.
+- Restrict incident information to authorized personnel.
+- Enforce dispatcher authentication and authorization on the backend.
+- Handle location and emergency information responsibly.
+- Treat AI-generated recommendations as potentially fallible.
+- Never claim an SOS was delivered unless successful delivery is confirmed.
+
+## 🚀 Future Scope
+
+- Integration with verified emergency-service communication channels.
+- Role-based dispatcher access and secure incident management.
+- Multilingual voice-based emergency reporting.
+- Improved triage evaluation and safety testing.
+- Verified ambulance and hospital availability integrations.
+- Incident audit trails and escalation workflows.
+
+## ⚠️ Safety Disclaimer
+
+RESQ AI is an experimental emergency-assistance platform. It does not replace doctors, paramedics, hospitals, ambulances, or official emergency services. AI-generated information may be incomplete or incorrect.
+
+**For a real emergency, contact local emergency services immediately.** Do not delay professional help to use the application.
+
+---
+
+**RESQ AI — Intelligent assistance. Location-aware information. Human-led emergency response.**
