@@ -58,7 +58,7 @@ flowchart TD
 - **Backend:** Coordinates API requests, processing, and incident data.
 - **Agent workflow:** Orchestrates AI-assisted analysis and emergency-related tasks.
 - **External services:** Provide generative AI and nearby hospital information.
-- **Dispatcher dashboard:** Presents configured incident updates for human review.
+- **Dispatcher dashboard:** Presents configured incident updates for human reviews.
 
 *The diagram represents the intended architecture. Confirm actual database persistence, event streaming, and integrations against the deployed implementation.*
 
