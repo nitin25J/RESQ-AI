@@ -1,5 +1,5 @@
 # RESQ AI
-### Agentic AI Emergency Response Platform
+### Agentic AI Emergency Response Platform.
 
 RESQ AI is a full-stack AI-powered emergency response platform that combines **dynamic emergency triage, first-aid guidance, GPS-based hospital discovery, SOS preparation, and real-time dispatcher monitoring** into a unified workflow.
 
